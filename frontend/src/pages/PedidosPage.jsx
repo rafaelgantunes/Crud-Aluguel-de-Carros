@@ -1,6 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import {
+  FileTextIcon,
+  PlusIcon,
+  EditIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  ClockIcon,
+  ShieldCheckIcon,
+  CreditCardIcon,
+  CalendarIcon,
+  SearchIcon,
+  DollarSignIcon,
+  AlertCircleIcon,
+  BankIcon,
+  BuildingIcon,
+  UserIcon,
+} from '../components/Icons';
 
 export default function PedidosPage() {
   const { usuario, isCliente, isAgente } = useAuth();
@@ -8,6 +25,8 @@ export default function PedidosPage() {
   const [automoveis, setAutomoveis] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [bancos, setBancos] = useState([]);
+  const [busca, setBusca] = useState('');
+  const [filtroStatus, setFiltroStatus] = useState('TODOS');
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
 
@@ -100,10 +119,10 @@ export default function PedidosPage() {
       };
       if (editandoPedidoId) {
         await api.modificarPedido(editandoPedidoId, payload);
-        setSucesso('Pedido de aluguel modificado com sucesso!');
+        setSucesso('Pedido de aluguel modificado com sucesso.');
       } else {
         await api.introduzirPedido(payload);
-        setSucesso('Novo pedido de aluguel introduzido no sistema! Aguardando análise financeira.');
+        setSucesso('Novo pedido de aluguel introduzido e encaminhado para análise financeira.');
       }
       setModalPedido(false);
       carregarDados();
@@ -118,7 +137,7 @@ export default function PedidosPage() {
       parecerPositivo: true,
       parecerFinanceiro:
         pedido.parecerFinanceiro ||
-        'Parecer favorável: Renda mensal compatível com o valor do contrato.',
+        'Parecer favorável: Renda mensal comprovada compatível com o valor do contrato.',
       concederContratoCredito: pedido.tipoContrato === 'CREDITO_BANCO',
       bancoAgenteId: bancos[0]?.id || usuario.id,
       taxaJurosMensal: 1.49,
@@ -142,7 +161,7 @@ export default function PedidosPage() {
         taxaJurosMensal: Number(avaliacaoForm.taxaJurosMensal),
         quantidadeParcelas: Number(avaliacaoForm.quantidadeParcelas),
       });
-      setSucesso('Avaliação financeira registrada com sucesso!');
+      setSucesso('Parecer financeiro registrado com sucesso.');
       setModalAvaliacao(false);
       carregarDados();
     } catch (err) {
@@ -155,7 +174,9 @@ export default function PedidosPage() {
     setSucesso('');
     try {
       await api.executarContrato(pedidoId);
-      setSucesso('Contrato executado com sucesso! O registro de propriedade do veículo foi atualizado.');
+      setSucesso(
+        'Contrato executado com sucesso. O registro de propriedade do veículo foi atualizado.'
+      );
       carregarDados();
     } catch (err) {
       setErro(err.message);
@@ -178,61 +199,247 @@ export default function PedidosPage() {
   const renderBadgeStatus = (status) => {
     switch (status) {
       case 'AGUARDANDO_ANALISE':
-        return <span className="badge badge-warning">⏳ Aguardando Análise Financeira</span>;
+        return (
+          <span className="badge badge-warning">
+            <ClockIcon size={13} />
+            <span>Aguardando Análise Financeira</span>
+          </span>
+        );
       case 'APROVADO_AGUARDANDO_CONTRATO':
-        return <span className="badge badge-info">✅ Parecer Positivo (Pronto p/ Contrato)</span>;
+        return (
+          <span className="badge badge-info">
+            <ShieldCheckIcon size={13} />
+            <span>Parecer Positivo (Pronto p/ Contrato)</span>
+          </span>
+        );
       case 'CONTRATO_EXECUTADO':
-        return <span className="badge badge-success">📜 Contrato Executado</span>;
+        return (
+          <span className="badge badge-success">
+            <CheckCircleIcon size={13} />
+            <span>Contrato Executado</span>
+          </span>
+        );
       case 'REJEITADO':
-        return <span className="badge badge-danger">❌ Parecer Negativo</span>;
+        return (
+          <span className="badge badge-danger">
+            <XCircleIcon size={13} />
+            <span>Parecer Negativo</span>
+          </span>
+        );
       case 'CANCELADO':
-        return <span className="badge badge-danger">🚫 Cancelado</span>;
+        return (
+          <span className="badge badge-danger">
+            <XCircleIcon size={13} />
+            <span>Cancelado</span>
+          </span>
+        );
       default:
         return <span className="badge badge-info">{status}</span>;
     }
   };
 
-  const formatTipoContrato = (tipo) => {
-    if (tipo === 'CREDITO_BANCO') return '🏦 Associado a Contrato de Crédito (Propriedade Banco)';
-    if (tipo === 'PROPRIEDADE_CLIENTE') return '👤 Leasing c/ Opção de Propriedade do Cliente';
-    return '🏢 Locação Padrão (Propriedade Empresa)';
+  const renderModalidade = (tipo) => {
+    if (tipo === 'CREDITO_BANCO') {
+      return (
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.35rem',
+            fontSize: '0.77rem',
+            color: '#6d28d9',
+            fontWeight: 600,
+          }}
+        >
+          <BankIcon size={14} />
+          <span>Crédito Bancário (Propriedade Banco)</span>
+        </span>
+      );
+    }
+    if (tipo === 'PROPRIEDADE_CLIENTE') {
+      return (
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.35rem',
+            fontSize: '0.77rem',
+            color: '#0284c7',
+            fontWeight: 600,
+          }}
+        >
+          <UserIcon size={14} />
+          <span>Aquisição / Propriedade Cliente</span>
+        </span>
+      );
+    }
+    return (
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '0.35rem',
+          fontSize: '0.77rem',
+          color: '#475569',
+          fontWeight: 600,
+        }}
+      >
+        <BuildingIcon size={14} />
+        <span>Locação Padrão (Propriedade Empresa)</span>
+      </span>
+    );
   };
+
+  const pedidosFiltrados = pedidos.filter((p) => {
+    const matchStatus = filtroStatus === 'TODOS' || p.status === filtroStatus;
+    const termo = busca.toLowerCase();
+    const matchBusca =
+      p.codigoPedido?.toLowerCase().includes(termo) ||
+      p.cliente?.nome?.toLowerCase().includes(termo) ||
+      p.automovel?.modelo?.toLowerCase().includes(termo) ||
+      p.automovel?.marca?.toLowerCase().includes(termo) ||
+      p.automovel?.placa?.toLowerCase().includes(termo);
+    return matchStatus && matchBusca;
+  });
+
+  const pendentesCount = pedidos.filter((p) => p.status === 'AGUARDANDO_ANALISE').length;
+  const aprovadosCount = pedidos.filter(
+    (p) => p.status === 'APROVADO_AGUARDANDO_CONTRATO' || p.status === 'CONTRATO_EXECUTADO'
+  ).length;
+  const volumeTotal = pedidos
+    .filter((p) => p.status !== 'CANCELADO')
+    .reduce((acc, p) => acc + Number(p.valorTotal || 0), 0);
 
   return (
     <div>
+      {/* KPI Bento Grid */}
+      <div className="kpi-grid">
+        <div className="kpi-card">
+          <div>
+            <div className="kpi-label">Total de Pedidos</div>
+            <div className="kpi-value">{pedidos.length}</div>
+            <div className="kpi-sub">Solicitações registradas</div>
+          </div>
+          <div className="kpi-icon blue">
+            <FileTextIcon size={22} />
+          </div>
+        </div>
+
+        <div className="kpi-card">
+          <div>
+            <div className="kpi-label">Em Análise Financeira</div>
+            <div className="kpi-value">{pendentesCount}</div>
+            <div className="kpi-sub">Aguardando parecer do agente</div>
+          </div>
+          <div className="kpi-icon amber">
+            <ClockIcon size={22} />
+          </div>
+        </div>
+
+        <div className="kpi-card">
+          <div>
+            <div className="kpi-label">Parecer Positivo / Ativos</div>
+            <div className="kpi-value">{aprovadosCount}</div>
+            <div className="kpi-sub">Aprovados ou contratos executados</div>
+          </div>
+          <div className="kpi-icon green">
+            <ShieldCheckIcon size={22} />
+          </div>
+        </div>
+
+        <div className="kpi-card">
+          <div>
+            <div className="kpi-label">Volume Contratado</div>
+            <div className="kpi-value">
+              R$ {volumeTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            </div>
+            <div className="kpi-sub">Soma de pedidos ativos</div>
+          </div>
+          <div className="kpi-icon purple">
+            <DollarSignIcon size={22} />
+          </div>
+        </div>
+      </div>
+
       <div className="card">
         <div className="card-header">
-          <div>
-            <h2 className="card-title">📋 Gestão de Pedidos de Aluguel e Execução de Contratos</h2>
-            <p className="card-subtitle">
-              {isCliente
-                ? 'Introduza, consulte o status, modifique ou cancele seus pedidos e execute contratos após parecer financeiro positivo.'
-                : 'Painel do Agente: Analise pedidos do ponto de vista financeiro, associe contratos de crédito e gerencie modificações.'}
-            </p>
+          <div className="card-title-group">
+            <div className="kpi-icon blue">
+              <FileTextIcon size={20} />
+            </div>
+            <div>
+              <h2 className="card-title">Gestão de Pedidos de Aluguel e Contratos</h2>
+              <p className="card-subtitle">
+                {isCliente
+                  ? 'Introduza, consulte o status, modifique ou cancele seus pedidos e execute contratos após parecer positivo.'
+                  : 'Painel do Agente: Analise pedidos financeiramente, associe contratos de crédito e gerencie modificações.'}
+              </p>
+            </div>
           </div>
-          <button className="btn btn-primary" onClick={abrirNovoPedido}>
-            + Introduzir Pedido de Aluguel
+          <button type="button" className="btn btn-primary" onClick={abrirNovoPedido}>
+            <PlusIcon size={17} />
+            <span>Introduzir Pedido</span>
           </button>
         </div>
 
-        {erro && <div className="alert alert-error">{erro}</div>}
-        {sucesso && <div className="alert alert-success">{sucesso}</div>}
+        {erro && (
+          <div className="alert alert-error">
+            <AlertCircleIcon size={18} />
+            <span>{erro}</span>
+          </div>
+        )}
+        {sucesso && (
+          <div className="alert alert-success">
+            <CheckCircleIcon size={18} />
+            <span>{sucesso}</span>
+          </div>
+        )}
+
+        <div className="toolbar">
+          <div className="search-box">
+            <SearchIcon size={16} />
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Buscar por código (PED-...), cliente, veículo ou placa..."
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+            />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <select
+              className="form-control"
+              style={{ padding: '0.48rem 0.75rem', fontSize: '0.84rem' }}
+              value={filtroStatus}
+              onChange={(e) => setFiltroStatus(e.target.value)}
+              aria-label="Filtrar por status"
+            >
+              <option value="TODOS">Todos os Status</option>
+              <option value="AGUARDANDO_ANALISE">Aguardando Análise</option>
+              <option value="APROVADO_AGUARDANDO_CONTRATO">Parecer Positivo (Pronto p/ Contrato)</option>
+              <option value="CONTRATO_EXECUTADO">Contrato Executado</option>
+              <option value="REJEITADO">Parecer Negativo</option>
+              <option value="CANCELADO">Cancelados</option>
+            </select>
+          </div>
+        </div>
 
         <div className="table-wrapper">
           <table>
             <thead>
               <tr>
                 <th>Código / Período</th>
-                <th>Contratante & Renda</th>
-                <th>Automóvel & Modalidade</th>
+                <th>Contratante &amp; Renda</th>
+                <th>Automóvel &amp; Modalidade</th>
                 <th>Valor Total</th>
-                <th>Status & Parecer Financeiro</th>
+                <th>Status &amp; Parecer Financeiro</th>
                 <th>Contrato de Crédito</th>
-                <th>Ações Disponíveis</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody>
-              {pedidos.map((p) => {
+              {pedidosFiltrados.map((p) => {
                 const rendaCliente = (p.cliente?.rendimentos || []).reduce(
                   (acc, r) => acc + Number(r.valorRendimento || 0),
                   0
@@ -240,109 +447,159 @@ export default function PedidosPage() {
                 return (
                   <tr key={p.id}>
                     <td>
-                      <strong>{p.codigoPedido}</strong>
-                      <div style={{ fontSize: '0.8rem', color: '#475569' }}>
-                        📅 {p.dataInicio} até {p.dataFim}
+                      <strong className="mono" style={{ color: '#0f172a', fontSize: '0.86rem' }}>
+                        {p.codigoPedido}
+                      </strong>
+                      <div
+                        className="tabular"
+                        style={{
+                          fontSize: '0.76rem',
+                          color: '#475569',
+                          marginTop: '0.25rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.3rem',
+                        }}
+                      >
+                        <CalendarIcon size={13} />
+                        <span>
+                          {p.dataInicio} até {p.dataFim}
+                        </span>
                       </div>
                     </td>
                     <td>
-                      <strong>{p.cliente?.nome}</strong>
-                      <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
-                        CPF: {p.cliente?.cpf} • {p.cliente?.profissao}
+                      <strong style={{ color: '#0f172a', fontWeight: 600 }}>
+                        {p.cliente?.nome}
+                      </strong>
+                      <div className="mono" style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                        {p.cliente?.cpf} • {p.cliente?.profissao}
                       </div>
-                      <div style={{ fontSize: '0.78rem', color: '#15803d', fontWeight: 600 }}>
-                        💰 Renda ({p.cliente?.rendimentos?.length || 0}/3): R${' '}
+                      <div
+                        className="tabular"
+                        style={{
+                          fontSize: '0.77rem',
+                          color: '#059669',
+                          fontWeight: 600,
+                          marginTop: '0.2rem',
+                        }}
+                      >
+                        Renda ({p.cliente?.rendimentos?.length || 0}/3): R${' '}
                         {rendaCliente.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </div>
                     </td>
                     <td>
-                      <strong>
-                        {p.automovel?.marca} {p.automovel?.modelo}
-                      </strong>{' '}
-                      <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
-                        ({p.automovel?.placa})
-                      </span>
-                      <div style={{ fontSize: '0.78rem', color: '#334155', marginTop: '0.2rem' }}>
-                        {formatTipoContrato(p.tipoContrato)}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                        <strong style={{ color: '#0f172a' }}>
+                          {p.automovel?.marca} {p.automovel?.modelo}
+                        </strong>
+                        <span className="plate-badge">{p.automovel?.placa}</span>
+                      </div>
+                      <div style={{ marginTop: '0.3rem' }}>
+                        {renderModalidade(p.tipoContrato)}
                       </div>
                       {p.observacoesCliente && (
-                        <div style={{ fontSize: '0.76rem', color: '#64748b', fontStyle: 'italic', marginTop: '0.2rem' }}>
-                          "{p.observacoesCliente}"
+                        <div
+                          style={{
+                            fontSize: '0.75rem',
+                            color: '#64748b',
+                            fontStyle: 'italic',
+                            marginTop: '0.25rem',
+                          }}
+                        >
+                          &ldquo;{p.observacoesCliente}&rdquo;
                         </div>
                       )}
                     </td>
-                    <td>
-                      <strong style={{ fontSize: '0.98rem' }}>
+                    <td className="tabular">
+                      <strong style={{ fontSize: '0.95rem', color: '#0f172a' }}>
                         R$ {Number(p.valorTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </strong>
                     </td>
-                    <td style={{ maxWidth: '260px' }}>
+                    <td style={{ maxWidth: '270px' }}>
                       {renderBadgeStatus(p.status)}
                       {p.parecerFinanceiro && (
                         <div
                           style={{
-                            fontSize: '0.78rem',
+                            fontSize: '0.76rem',
                             background: '#f8fafc',
-                            padding: '0.4rem 0.55rem',
+                            padding: '0.45rem 0.6rem',
                             borderRadius: '6px',
-                            marginTop: '0.35rem',
+                            marginTop: '0.4rem',
                             border: '1px solid #e2e8f0',
+                            color: '#334155',
                           }}
                         >
-                          <strong>Parecer ({p.agenteAvaliador?.nome || 'Agente'}):</strong> {p.parecerFinanceiro}
+                          <strong>{p.agenteAvaliador?.nome || 'Agente'}:</strong>{' '}
+                          {p.parecerFinanceiro}
                         </div>
                       )}
                     </td>
                     <td>
                       {p.contratoCredito ? (
-                        <div style={{ fontSize: '0.78rem' }}>
-                          <span className="badge badge-purple">{p.contratoCredito.numeroContrato}</span>
-                          <div style={{ marginTop: '0.2rem' }}>
-                            <strong>Banco:</strong> {p.contratoCredito.bancoAgente?.nome}
+                        <div style={{ fontSize: '0.77rem' }}>
+                          <span className="badge badge-purple mono">
+                            <CreditCardIcon size={12} />
+                            <span>{p.contratoCredito.numeroContrato}</span>
+                          </span>
+                          <div style={{ marginTop: '0.25rem', color: '#334155' }}>
+                            <strong>{p.contratoCredito.bancoAgente?.nome}</strong>
                           </div>
-                          <div>
-                            {p.contratoCredito.quantidadeParcelas}x • Juros: {p.contratoCredito.taxaJurosMensal}% a.m.
+                          <div className="tabular" style={{ color: '#64748b' }}>
+                            {p.contratoCredito.quantidadeParcelas}x • Juros:{' '}
+                            {p.contratoCredito.taxaJurosMensal}% a.m.
                           </div>
                         </div>
                       ) : (
-                        <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Sem financiamento</span>
+                        <span style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
+                          Não aplicável
+                        </span>
                       )}
                     </td>
                     <td>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                         {p.status !== 'CANCELADO' && p.status !== 'CONTRATO_EXECUTADO' && (
                           <button
+                            type="button"
                             className="btn btn-outline btn-sm"
                             onClick={() => abrirModificarPedido(p)}
                           >
-                            ✏️ Modificar
+                            <EditIcon size={13} />
+                            <span>Modificar</span>
                           </button>
                         )}
 
-                        {isAgente && p.status !== 'CANCELADO' && p.status !== 'CONTRATO_EXECUTADO' && (
-                          <button
-                            className="btn btn-primary btn-sm"
-                            onClick={() => abrirModalAvaliacao(p)}
-                          >
-                            🔍 Avaliar Finanças
-                          </button>
-                        )}
+                        {isAgente &&
+                          p.status !== 'CANCELADO' &&
+                          p.status !== 'CONTRATO_EXECUTADO' && (
+                            <button
+                              type="button"
+                              className="btn btn-primary btn-sm"
+                              onClick={() => abrirModalAvaliacao(p)}
+                            >
+                              <ShieldCheckIcon size={14} />
+                              <span>Avaliar Finanças</span>
+                            </button>
+                          )}
 
                         {p.status === 'APROVADO_AGUARDANDO_CONTRATO' && (
                           <button
+                            type="button"
                             className="btn btn-success btn-sm"
                             onClick={() => handleExecutarContrato(p.id)}
                           >
-                            ✍️ Executar Contrato
+                            <CheckCircleIcon size={14} />
+                            <span>Executar Contrato</span>
                           </button>
                         )}
 
                         {p.status !== 'CANCELADO' && (
                           <button
-                            className="btn btn-danger btn-sm"
+                            type="button"
+                            className="btn btn-danger-ghost btn-sm"
                             onClick={() => handleCancelarPedido(p.id)}
                           >
-                            🚫 Cancelar
+                            <XCircleIcon size={14} />
+                            <span>Cancelar</span>
                           </button>
                         )}
                       </div>
@@ -350,10 +607,10 @@ export default function PedidosPage() {
                   </tr>
                 );
               })}
-              {pedidos.length === 0 && (
+              {pedidosFiltrados.length === 0 && (
                 <tr>
-                  <td colSpan="7" style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                    Nenhum pedido de aluguel encontrado.
+                  <td colSpan="7" style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                    Nenhum pedido de aluguel encontrado para os filtros selecionados.
                   </td>
                 </tr>
               )}
@@ -368,10 +625,17 @@ export default function PedidosPage() {
           <div className="modal-content">
             <div className="card-header">
               <h3 className="card-title">
-                {editandoPedidoId ? '✏️ Modificar Pedido de Aluguel' : '🚗 Introduzir Novo Pedido de Aluguel'}
+                {editandoPedidoId
+                  ? 'Modificar Pedido de Aluguel'
+                  : 'Introduzir Novo Pedido de Aluguel'}
               </h3>
-              <button className="btn btn-outline btn-sm" onClick={() => setModalPedido(false)}>
-                ✕ Fechar
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => setModalPedido(false)}
+              >
+                <XCircleIcon size={15} />
+                <span>Fechar</span>
               </button>
             </div>
 
@@ -415,7 +679,7 @@ export default function PedidosPage() {
                   <label>Data de Início *</label>
                   <input
                     type="date"
-                    className="form-control"
+                    className="form-control tabular"
                     value={pedidoForm.dataInicio}
                     onChange={(e) => setPedidoForm({ ...pedidoForm, dataInicio: e.target.value })}
                     required
@@ -425,7 +689,7 @@ export default function PedidosPage() {
                   <label>Data de Término *</label>
                   <input
                     type="date"
-                    className="form-control"
+                    className="form-control tabular"
                     value={pedidoForm.dataFim}
                     onChange={(e) => setPedidoForm({ ...pedidoForm, dataFim: e.target.value })}
                     required
@@ -434,20 +698,20 @@ export default function PedidosPage() {
               </div>
 
               <div className="form-group">
-                <label>Tipo de Contrato e Registro de Propriedade *</label>
+                <label>Modalidade de Contrato e Registro de Propriedade *</label>
                 <select
                   className="form-control"
                   value={pedidoForm.tipoContrato}
                   onChange={(e) => setPedidoForm({ ...pedidoForm, tipoContrato: e.target.value })}
                 >
                   <option value="PADRAO_EMPRESA">
-                    🏢 Aluguel Padrão (Propriedade registrada para a Empresa)
+                    Aluguel Padrão (Propriedade registrada para a Empresa)
                   </option>
                   <option value="CREDITO_BANCO">
-                    🏦 Associado a Contrato de Crédito (Propriedade registrada para o Banco Agente)
+                    Associado a Contrato de Crédito (Propriedade registrada para o Banco Agente)
                   </option>
                   <option value="PROPRIEDADE_CLIENTE">
-                    👤 Aluguel / Leasing com Transferência de Propriedade ao Cliente
+                    Leasing com Registro de Propriedade para o Cliente
                   </option>
                 </select>
               </div>
@@ -459,16 +723,32 @@ export default function PedidosPage() {
                   rows="3"
                   placeholder="Informe detalhes adicionais da retirada ou solicitação de crédito..."
                   value={pedidoForm.observacoesCliente}
-                  onChange={(e) => setPedidoForm({ ...pedidoForm, observacoesCliente: e.target.value })}
+                  onChange={(e) =>
+                    setPedidoForm({ ...pedidoForm, observacoesCliente: e.target.value })
+                  }
                 />
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
-                <button type="button" className="btn btn-outline" onClick={() => setModalPedido(false)}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  gap: '0.5rem',
+                  marginTop: '1rem',
+                }}
+              >
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={() => setModalPedido(false)}
+                >
                   Cancelar
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  💾 {editandoPedidoId ? 'Salvar Modificações' : 'Enviar Pedido para Análise'}
+                  <CheckCircleIcon size={16} />
+                  <span>
+                    {editandoPedidoId ? 'Salvar Modificações' : 'Enviar Pedido para Análise'}
+                  </span>
                 </button>
               </div>
             </form>
@@ -482,43 +762,56 @@ export default function PedidosPage() {
           <div className="modal-content">
             <div className="card-header">
               <h3 className="card-title">
-                🔍 Análise Financeira do Pedido {pedidoEmAvaliacao.codigoPedido}
+                Análise Financeira — {pedidoEmAvaliacao.codigoPedido}
               </h3>
-              <button className="btn btn-outline btn-sm" onClick={() => setModalAvaliacao(false)}>
-                ✕ Fechar
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => setModalAvaliacao(false)}
+              >
+                <XCircleIcon size={15} />
+                <span>Fechar</span>
               </button>
             </div>
 
-            <div className="rendimento-box" style={{ marginBottom: '1rem' }}>
-              <h4 style={{ fontSize: '0.92rem', marginBottom: '0.4rem' }}>
-                📊 Dossiê Financeiro do Contratante: {pedidoEmAvaliacao.cliente?.nome}
+            <div className="rendimento-box" style={{ marginBottom: '1.1rem' }}>
+              <h4 style={{ fontSize: '0.9rem', marginBottom: '0.35rem', color: '#0f172a' }}>
+                Dossiê Financeiro do Contratante: {pedidoEmAvaliacao.cliente?.nome}
               </h4>
-              <p style={{ fontSize: '0.84rem', color: '#475569' }}>
-                <strong>CPF:</strong> {pedidoEmAvaliacao.cliente?.cpf} | <strong>RG:</strong> {pedidoEmAvaliacao.cliente?.rg} |{' '}
-                <strong>Profissão:</strong> {pedidoEmAvaliacao.cliente?.profissao}
+              <p className="mono" style={{ fontSize: '0.8rem', color: '#475569' }}>
+                CPF: {pedidoEmAvaliacao.cliente?.cpf} | RG: {pedidoEmAvaliacao.cliente?.rg} |{' '}
+                {pedidoEmAvaliacao.cliente?.profissao}
               </p>
-              <div style={{ marginTop: '0.5rem', fontSize: '0.84rem' }}>
+              <div style={{ marginTop: '0.5rem', fontSize: '0.82rem' }}>
                 <strong>Entidades Empregadoras e Rendimentos Auferidos:</strong>
                 <ul style={{ marginLeft: '1.2rem', marginTop: '0.25rem' }}>
                   {(pedidoEmAvaliacao.cliente?.rendimentos || []).map((r, i) => (
-                    <li key={i}>
+                    <li key={i} className="tabular">
                       {r.entidadeEmpregadora}:{' '}
                       <strong>
-                        R$ {Number(r.valorRendimento).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        R${' '}
+                        {Number(r.valorRendimento).toLocaleString('pt-BR', {
+                          minimumFractionDigits: 2,
+                        })}
                       </strong>
                     </li>
                   ))}
                 </ul>
               </div>
-              <p style={{ marginTop: '0.5rem', fontSize: '0.88rem', color: '#1d4ed8' }}>
-                <strong>Valor Total do Pedido:</strong> R${' '}
-                {Number(pedidoEmAvaliacao.valorTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              <p
+                className="tabular"
+                style={{ marginTop: '0.55rem', fontSize: '0.88rem', color: '#2563eb' }}
+              >
+                <strong>Valor Total do Contrato:</strong> R${' '}
+                {Number(pedidoEmAvaliacao.valorTotal).toLocaleString('pt-BR', {
+                  minimumFractionDigits: 2,
+                })}
               </p>
             </div>
 
             <form onSubmit={handleAvaliarPedido}>
               <div className="form-group">
-                <label>Resultado da Análise Financeira *</label>
+                <label>Decisão da Análise Financeira *</label>
                 <select
                   className="form-control"
                   value={avaliacaoForm.parecerPositivo ? 'true' : 'false'}
@@ -529,13 +822,17 @@ export default function PedidosPage() {
                     })
                   }
                 >
-                  <option value="true">✅ Parecer Positivo (Aprovar e colocar à consideração para execução)</option>
-                  <option value="false">❌ Parecer Negativo (Rejeitar pedido por incompatibilidade financeira)</option>
+                  <option value="true">
+                    Parecer Positivo (Aprovar e disponibilizar para execução do contrato)
+                  </option>
+                  <option value="false">
+                    Parecer Negativo (Rejeitar pedido por incompatibilidade financeira)
+                  </option>
                 </select>
               </div>
 
               <div className="form-group">
-                <label>Justificativa / Parecer Financeiro *</label>
+                <label>Justificativa / Parecer Técnico *</label>
                 <textarea
                   className="form-control"
                   rows="3"
@@ -549,7 +846,16 @@ export default function PedidosPage() {
 
               {avaliacaoForm.parecerPositivo && (
                 <div className="rendimento-box">
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.88rem' }}>
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      fontWeight: 700,
+                      fontSize: '0.86rem',
+                      cursor: 'pointer',
+                    }}
+                  >
                     <input
                       type="checkbox"
                       checked={avaliacaoForm.concederContratoCredito}
@@ -560,18 +866,22 @@ export default function PedidosPage() {
                         })
                       }
                     />
-                    🏦 Associar Contrato de Crédito concedido por Banco Agente
+                    <CreditCardIcon size={16} />
+                    <span>Associar Contrato de Crédito concedido por Banco Agente</span>
                   </label>
 
                   {avaliacaoForm.concederContratoCredito && (
-                    <div className="grid-3" style={{ marginTop: '0.75rem' }}>
+                    <div className="grid-3" style={{ marginTop: '0.85rem' }}>
                       <div className="form-group">
                         <label>Banco Agente Concessor</label>
                         <select
                           className="form-control"
                           value={avaliacaoForm.bancoAgenteId}
                           onChange={(e) =>
-                            setAvaliacaoForm({ ...avaliacaoForm, bancoAgenteId: e.target.value })
+                            setAvaliacaoForm({
+                              ...avaliacaoForm,
+                              bancoAgenteId: e.target.value,
+                            })
                           }
                         >
                           {bancos.map((b) => (
@@ -586,10 +896,13 @@ export default function PedidosPage() {
                         <input
                           type="number"
                           step="0.01"
-                          className="form-control"
+                          className="form-control tabular"
                           value={avaliacaoForm.taxaJurosMensal}
                           onChange={(e) =>
-                            setAvaliacaoForm({ ...avaliacaoForm, taxaJurosMensal: e.target.value })
+                            setAvaliacaoForm({
+                              ...avaliacaoForm,
+                              taxaJurosMensal: e.target.value,
+                            })
                           }
                         />
                       </div>
@@ -599,7 +912,7 @@ export default function PedidosPage() {
                           type="number"
                           min="1"
                           max="60"
-                          className="form-control"
+                          className="form-control tabular"
                           value={avaliacaoForm.quantidadeParcelas}
                           onChange={(e) =>
                             setAvaliacaoForm({
@@ -614,12 +927,24 @@ export default function PedidosPage() {
                 </div>
               )}
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.25rem' }}>
-                <button type="button" className="btn btn-outline" onClick={() => setModalAvaliacao(false)}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  gap: '0.5rem',
+                  marginTop: '1.25rem',
+                }}
+              >
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={() => setModalAvaliacao(false)}
+                >
                   Cancelar
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  💾 Registrar Parecer Financeiro
+                  <ShieldCheckIcon size={16} />
+                  <span>Registrar Parecer Financeiro</span>
                 </button>
               </div>
             </form>
@@ -629,4 +954,3 @@ export default function PedidosPage() {
     </div>
   );
 }
-

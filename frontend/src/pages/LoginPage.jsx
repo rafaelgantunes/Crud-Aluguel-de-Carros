@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import {
+  CarIcon,
+  LockIcon,
+  UserIcon,
+  BuildingIcon,
+  BankIcon,
+  BriefcaseIcon,
+  PlusIcon,
+  TrashIcon,
+  CheckCircleIcon,
+  AlertCircleIcon,
+  ShieldCheckIcon,
+} from '../components/Icons';
 
 export default function LoginPage() {
   const { salvarLogin } = useAuth();
@@ -99,7 +112,7 @@ export default function LoginPage() {
           })),
       };
       await api.criarCliente(payload);
-      setSucesso('Cadastro de cliente realizado com sucesso! Faça login para acessar o sistema.');
+      setSucesso('Cadastro de cliente realizado com sucesso. Autentique-se abaixo para acessar.');
       setUsername(clienteForm.username);
       setSenha(clienteForm.senha);
       setModo('login');
@@ -117,7 +130,7 @@ export default function LoginPage() {
     setCarregando(true);
     try {
       await api.registrarAgente(agenteForm);
-      setSucesso('Cadastro de Agente realizado com sucesso! Faça login para acessar o sistema.');
+      setSucesso('Cadastro de Agente realizado com sucesso. Autentique-se abaixo para acessar.');
       setUsername(agenteForm.username);
       setSenha(agenteForm.senha);
       setModo('login');
@@ -131,68 +144,121 @@ export default function LoginPage() {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
-        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <h1 style={{ fontSize: '1.6rem', color: '#0f172a', marginBottom: '0.25rem' }}>
-            🚗 Sistema de Aluguel de Carros
+        <div style={{ textAlign: 'center', marginBottom: '1.6rem' }}>
+          <div
+            style={{
+              width: 52,
+              height: 52,
+              borderRadius: 14,
+              background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+              color: '#ffffff',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '0.85rem',
+              boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)',
+            }}
+          >
+            <CarIcon size={26} />
+          </div>
+          <h1 style={{ fontSize: '1.55rem', color: '#0f172a', fontWeight: 800 }}>
+            AutoRent PUC Minas
           </h1>
-          <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
-            PUC Minas • Engenharia de Software • DIAW (Laboratório 02)
+          <p style={{ color: '#475569', fontSize: '0.88rem', marginTop: '0.2rem' }}>
+            Sistema de Gestão de Aluguéis e Contratos de Crédito Automotivo
           </p>
-          <p style={{ color: '#475569', fontSize: '0.82rem', marginTop: '0.25rem' }}>
-            🔒 <em>O sistema só pode ser utilizado após cadastro prévio e autenticação obrigatória.</em>
-          </p>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              marginTop: '0.6rem',
+              padding: '0.28rem 0.75rem',
+              background: '#f1f5f9',
+              borderRadius: '999px',
+              fontSize: '0.76rem',
+              color: '#475569',
+              fontWeight: 500,
+            }}
+          >
+            <ShieldCheckIcon size={14} />
+            <span>Acesso restrito a usuários previamente cadastrados e autenticados</span>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+        <div className="segmented-control" role="tablist">
           <button
             type="button"
-            className={`btn ${modo === 'login' ? 'btn-primary' : 'btn-outline'}`}
-            style={{ flex: 1 }}
-            onClick={() => { setModo('login'); setErro(''); }}
+            className={`segmented-btn ${modo === 'login' ? 'active' : ''}`}
+            onClick={() => {
+              setModo('login');
+              setErro('');
+            }}
           >
-            🔑 Login
+            <LockIcon size={15} />
+            <span>Autenticação</span>
           </button>
           <button
             type="button"
-            className={`btn ${modo === 'cadastroCliente' ? 'btn-primary' : 'btn-outline'}`}
-            style={{ flex: 1 }}
-            onClick={() => { setModo('cadastroCliente'); setErro(''); setSucesso(''); }}
+            className={`segmented-btn ${modo === 'cadastroCliente' ? 'active' : ''}`}
+            onClick={() => {
+              setModo('cadastroCliente');
+              setErro('');
+              setSucesso('');
+            }}
           >
-            👤 Cadastrar Cliente
+            <UserIcon size={15} />
+            <span>Novo Cliente</span>
           </button>
           <button
             type="button"
-            className={`btn ${modo === 'cadastroAgente' ? 'btn-primary' : 'btn-outline'}`}
-            style={{ flex: 1 }}
-            onClick={() => { setModo('cadastroAgente'); setErro(''); setSucesso(''); }}
+            className={`segmented-btn ${modo === 'cadastroAgente' ? 'active' : ''}`}
+            onClick={() => {
+              setModo('cadastroAgente');
+              setErro('');
+              setSucesso('');
+            }}
           >
-            🏦 Cadastrar Agente
+            <BankIcon size={15} />
+            <span>Novo Agente</span>
           </button>
         </div>
 
-        {erro && <div className="alert alert-error">{erro}</div>}
-        {sucesso && <div className="alert alert-success">{sucesso}</div>}
+        {erro && (
+          <div className="alert alert-error">
+            <AlertCircleIcon size={18} />
+            <span>{erro}</span>
+          </div>
+        )}
+        {sucesso && (
+          <div className="alert alert-success">
+            <CheckCircleIcon size={18} />
+            <span>{sucesso}</span>
+          </div>
+        )}
 
         {modo === 'login' && (
           <>
             <form onSubmit={handleLogin}>
               <div className="form-group">
-                <label>Usuário (Username)</label>
+                <label htmlFor="login-username">Usuário (Username)</label>
                 <input
+                  id="login-username"
                   type="text"
                   className="form-control"
-                  placeholder="Digite seu usuário..."
+                  placeholder="Ex: cliente, empresa ou banco"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
                 />
               </div>
               <div className="form-group">
-                <label>Senha</label>
+                <label htmlFor="login-password">Senha de Acesso</label>
                 <input
+                  id="login-password"
                   type="password"
                   className="form-control"
-                  placeholder="Digite sua senha..."
+                  placeholder="Digite sua senha"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
                   required
@@ -201,44 +267,57 @@ export default function LoginPage() {
               <button
                 type="submit"
                 className="btn btn-primary"
-                style={{ width: '100%', padding: '0.75rem', marginTop: '0.5rem' }}
+                style={{ width: '100%', padding: '0.72rem', marginTop: '0.4rem' }}
                 disabled={carregando}
               >
-                {carregando ? 'Autenticando...' : 'Entrar no Sistema'}
+                <LockIcon size={16} />
+                <span>{carregando ? 'Verificando credenciais...' : 'Entrar no Sistema'}</span>
               </button>
             </form>
 
             <div
               style={{
                 marginTop: '1.5rem',
-                paddingTop: '1.1rem',
+                paddingTop: '1.15rem',
                 borderTop: '1px solid #e2e8f0',
               }}
             >
-              <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '0.6rem', fontWeight: 600 }}>
-                ⚡ Acesso Rápido de Demonstração (Contas Pré-Cadastradas):
+              <p
+                style={{
+                  fontSize: '0.78rem',
+                  color: '#64748b',
+                  marginBottom: '0.65rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                Perfis de Demonstração (Acesso em 1 Clique)
               </p>
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(175px, 1fr))', gap: '0.5rem' }}>
                 <button
                   type="button"
                   className="btn btn-outline btn-sm"
                   onClick={() => loginRapido('cliente', '123456')}
                 >
-                  👤 Cliente (cliente / 123456)
+                  <UserIcon size={15} />
+                  <span>Cliente (cliente)</span>
                 </button>
                 <button
                   type="button"
                   className="btn btn-outline btn-sm"
                   onClick={() => loginRapido('empresa', '123456')}
                 >
-                  🏢 Agente Empresa (empresa / 123456)
+                  <BuildingIcon size={15} />
+                  <span>Empresa (empresa)</span>
                 </button>
                 <button
                   type="button"
                   className="btn btn-outline btn-sm"
                   onClick={() => loginRapido('banco', '123456')}
                 >
-                  🏦 Agente Banco (banco / 123456)
+                  <BankIcon size={15} />
+                  <span>Banco (banco)</span>
                 </button>
               </div>
             </div>
@@ -267,10 +346,10 @@ export default function LoginPage() {
                 />
               </div>
               <div className="form-group">
-                <label>RG *</label>
+                <label>Documento RG *</label>
                 <input
-                  className="form-control"
-                  placeholder="Ex: MG-12.345.678"
+                  className="form-control mono"
+                  placeholder="MG-12.345.678"
                   value={clienteForm.rg}
                   onChange={(e) => setClienteForm({ ...clienteForm, rg: e.target.value })}
                   required
@@ -279,7 +358,7 @@ export default function LoginPage() {
               <div className="form-group">
                 <label>CPF *</label>
                 <input
-                  className="form-control"
+                  className="form-control mono"
                   placeholder="000.000.000-00"
                   value={clienteForm.cpf}
                   onChange={(e) => setClienteForm({ ...clienteForm, cpf: e.target.value })}
@@ -289,7 +368,7 @@ export default function LoginPage() {
             </div>
 
             <div className="form-group">
-              <label>Endereço Residencial *</label>
+              <label>Endereço Residencial Completo *</label>
               <input
                 className="form-control"
                 value={clienteForm.endereco}
@@ -321,13 +400,34 @@ export default function LoginPage() {
             </div>
 
             <div className="rendimento-box">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
-                <label style={{ fontSize: '0.88rem', fontWeight: 700 }}>
-                  💼 Entidades Empregadoras e Rendimentos Auferidos (Máximo 3)
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '0.65rem',
+                }}
+              >
+                <label
+                  style={{
+                    fontSize: '0.84rem',
+                    fontWeight: 700,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                  }}
+                >
+                  <BriefcaseIcon size={16} />
+                  <span>Entidades Empregadoras e Rendimentos Auferidos (Máx. 3)</span>
                 </label>
                 {clienteForm.rendimentos.length < 3 && (
-                  <button type="button" className="btn btn-outline btn-sm" onClick={adicionarCampoRendimento}>
-                    + Adicionar Empregador ({clienteForm.rendimentos.length}/3)
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    onClick={adicionarCampoRendimento}
+                  >
+                    <PlusIcon size={14} />
+                    <span>Adicionar ({clienteForm.rendimentos.length}/3)</span>
                   </button>
                 )}
               </div>
@@ -339,14 +439,16 @@ export default function LoginPage() {
                     style={{ flex: 2 }}
                     placeholder={`Entidade Empregadora #${idx + 1}`}
                     value={rend.entidadeEmpregadora}
-                    onChange={(e) => atualizarRendimento(idx, 'entidadeEmpregadora', e.target.value)}
+                    onChange={(e) =>
+                      atualizarRendimento(idx, 'entidadeEmpregadora', e.target.value)
+                    }
                     required
                   />
                   <input
                     type="number"
                     step="0.01"
                     min="0"
-                    className="form-control"
+                    className="form-control tabular"
                     style={{ flex: 1 }}
                     placeholder="Rendimento (R$)"
                     value={rend.valorRendimento}
@@ -356,10 +458,11 @@ export default function LoginPage() {
                   {clienteForm.rendimentos.length > 1 && (
                     <button
                       type="button"
-                      className="btn btn-danger btn-sm"
+                      className="btn btn-danger-ghost btn-sm"
                       onClick={() => removerCampoRendimento(idx)}
+                      aria-label="Remover rendimento"
                     >
-                      ✕
+                      <TrashIcon size={14} />
                     </button>
                   )}
                 </div>
@@ -368,11 +471,12 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="btn btn-success"
-              style={{ width: '100%', padding: '0.75rem', marginTop: '1rem' }}
+              className="btn btn-primary"
+              style={{ width: '100%', padding: '0.72rem', marginTop: '1rem' }}
               disabled={carregando}
             >
-              {carregando ? 'Cadastrando...' : 'Concluir Cadastro Prévio de Cliente'}
+              <CheckCircleIcon size={16} />
+              <span>{carregando ? 'Processando cadastro...' : 'Concluir Cadastro Prévio de Cliente'}</span>
             </button>
           </form>
         )}
@@ -381,20 +485,20 @@ export default function LoginPage() {
           <form onSubmit={handleCadastroAgente}>
             <div className="grid-2">
               <div className="form-group">
-                <label>Tipo de Agente *</label>
+                <label>Categoria de Agente *</label>
                 <select
                   className="form-control"
                   value={agenteForm.tipoAgente}
                   onChange={(e) => setAgenteForm({ ...agenteForm, tipoAgente: e.target.value })}
                 >
-                  <option value="EMPRESA">🏢 Empresa Locadora</option>
-                  <option value="BANCO">🏦 Banco Agente (Concessor de Crédito)</option>
+                  <option value="EMPRESA">Empresa Locadora</option>
+                  <option value="BANCO">Banco Agente (Concessor de Crédito)</option>
                 </select>
               </div>
               <div className="form-group">
                 <label>CNPJ *</label>
                 <input
-                  className="form-control"
+                  className="form-control mono"
                   placeholder="00.000.000/0001-00"
                   value={agenteForm.cnpj}
                   onChange={(e) => setAgenteForm({ ...agenteForm, cnpj: e.target.value })}
@@ -441,11 +545,12 @@ export default function LoginPage() {
             </div>
             <button
               type="submit"
-              className="btn btn-success"
-              style={{ width: '100%', padding: '0.75rem', marginTop: '0.5rem' }}
+              className="btn btn-primary"
+              style={{ width: '100%', padding: '0.72rem', marginTop: '0.5rem' }}
               disabled={carregando}
             >
-              {carregando ? 'Cadastrando...' : 'Concluir Cadastro de Agente'}
+              <CheckCircleIcon size={16} />
+              <span>{carregando ? 'Processando cadastro...' : 'Concluir Cadastro de Agente'}</span>
             </button>
           </form>
         )}
@@ -453,4 +558,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
