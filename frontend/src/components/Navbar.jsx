@@ -42,7 +42,7 @@ export default function Navbar({ abaAtiva, setAbaAtiva }) {
     <header className="navbar">
       <div className="navbar-brand">
         <div className="brand-icon-box">
-          <CarIcon size={22} />
+          <img src="/logo.jpg" alt="Logo AutoRent PUC Minas" className="brand-logo-img" />
         </div>
         <div>
           <span className="brand-title">AutoRent PUC Minas</span>

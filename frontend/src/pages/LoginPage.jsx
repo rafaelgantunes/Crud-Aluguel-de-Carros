@@ -145,22 +145,11 @@ export default function LoginPage() {
     <div className="auth-wrapper">
       <div className="auth-card">
         <div style={{ textAlign: 'center', marginBottom: '1.6rem' }}>
-          <div
-            style={{
-              width: 52,
-              height: 52,
-              borderRadius: 14,
-              background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-              color: '#ffffff',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '0.85rem',
-              boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)',
-            }}
-          >
-            <CarIcon size={26} />
-          </div>
+          <img
+            src="/logo.jpg"
+            alt="Logo AutoRent PUC Minas"
+            className="auth-logo-img"
+          />
           <h1 style={{ fontSize: '1.55rem', color: '#0f172a', fontWeight: 800 }}>
             AutoRent PUC Minas
           </h1>
