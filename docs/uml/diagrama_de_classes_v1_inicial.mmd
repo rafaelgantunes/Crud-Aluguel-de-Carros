@@ -1,0 +1,58 @@
+classDiagram
+    direction TB
+
+    class Usuario {
+        -Long id
+        -String login
+        -String senha
+        +autenticar() boolean
+    }
+
+    class Cliente {
+        -String rg
+        -String cpf
+        -String nome
+        -String endereco
+        -String profissao
+        -List~Double~ rendimentos
+        +introduzirPedido()
+        +modificarPedido()
+        +consultarPedido()
+        +cancelarPedido()
+    }
+
+    class Agente {
+        -String nome
+        -String tipo
+        +avaliarPedido()
+        +modificarPedido()
+    }
+
+    class Automovel {
+        -String matricula
+        -int ano
+        -String marca
+        -String modelo
+        -String placa
+    }
+
+    class PedidoAluguel {
+        -Long id
+        -Date dataPedido
+        -String status
+        -boolean parecerFinanceiro
+    }
+
+    class ContratoCredito {
+        -Long id
+        -Double valor
+    }
+
+    Usuario <|-- Cliente
+    Usuario <|-- Agente
+    Cliente "1" --> "0..*" PedidoAluguel : realiza
+    Agente "1" --> "0..*" PedidoAluguel : avalia
+    PedidoAluguel "0..*" --> "1" Automovel : refere-se a
+    PedidoAluguel "0..1" --> "0..1" ContratoCredito : possui
+    Agente "1" --> "0..*" ContratoCredito : concede
+

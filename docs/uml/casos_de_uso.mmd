@@ -1,0 +1,50 @@
+flowchart LR
+    %% Atores
+    Cliente(["👤 Cliente (Usuário Individual)"])
+    AgenteEmpresa(["🏢 Agente (Empresa Locadora)"])
+    AgenteBanco(["🏦 Agente (Banco)"])
+
+    subgraph Sistema["Sistema de Gestão de Aluguel de Carros (Web)"]
+        UC01("UC01 - Realizar Cadastro Prévio")
+        UC02("UC02 - Autenticar no Sistema (Login)")
+        UC03("UC03 - Gerenciar Perfil e Rendimentos (máx. 3)")
+        UC04("UC04 - Introduzir Pedido de Aluguel")
+        UC05("UC05 - Consultar Status do Pedido de Aluguel")
+        UC06("UC06 - Modificar Pedido de Aluguel")
+        UC07("UC07 - Cancelar Pedido de Aluguel")
+        UC08("UC08 - Avaliar Pedido Financeiramente (Emitir Parecer)")
+        UC09("UC09 - Conceder e Associar Contrato de Crédito")
+        UC10("UC10 - Executar Contrato de Aluguel")
+        UC11("UC11 - Gerenciar Frota de Automóveis e Propriedade")
+    end
+
+    %% Relacionamentos Cliente
+    Cliente --> UC01
+    Cliente --> UC02
+    Cliente --> UC03
+    Cliente --> UC04
+    Cliente --> UC05
+    Cliente --> UC06
+    Cliente --> UC07
+    Cliente --> UC10
+
+    %% Relacionamentos Agente Empresa
+    AgenteEmpresa --> UC02
+    AgenteEmpresa --> UC06
+    AgenteEmpresa --> UC08
+    AgenteEmpresa --> UC10
+    AgenteEmpresa --> UC11
+
+    %% Relacionamentos Agente Banco
+    AgenteBanco --> UC02
+    AgenteBanco --> UC06
+    AgenteBanco --> UC08
+    AgenteBanco --> UC09
+    AgenteBanco --> UC11
+
+    %% Includes / Extends
+    UC04 -.->|"<<include>>"| UC02
+    UC08 -.->|"<<include>>"| UC02
+    UC09 -.->|"<<extend>>"| UC08
+    UC10 -.->|"<<include>>"| UC08
+
