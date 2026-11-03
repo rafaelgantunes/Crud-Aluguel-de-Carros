@@ -267,20 +267,20 @@ export default function ClientesPage() {
                 const total = calcularSomaRendimentos(c.rendimentos);
                 return (
                   <tr key={c.id}>
-                    <td className="mono" style={{ color: '#64748b' }}>
+                    <td data-label="ID" className="mono" style={{ color: '#64748b' }}>
                       #{c.id}
                     </td>
-                    <td>
+                    <td data-label="Contratante">
                       <strong style={{ color: '#0f172a', fontWeight: 600 }}>{c.nome}</strong>
                       <div className="mono" style={{ fontSize: '0.76rem', color: '#64748b' }}>
                         @{c.username}
                       </div>
                     </td>
-                    <td className="mono">
+                    <td data-label="Documentação" className="mono">
                       <div style={{ fontSize: '0.82rem', fontWeight: 600 }}>{c.cpf}</div>
                       <div style={{ fontSize: '0.75rem', color: '#64748b' }}>RG: {c.rg}</div>
                     </td>
-                    <td>
+                    <td data-label="Profissão & Endereço">
                       <span className="badge badge-info">
                         <span className="badge-dot" />
                         {c.profissao}
@@ -299,7 +299,7 @@ export default function ClientesPage() {
                         <span>{c.endereco}</span>
                       </div>
                     </td>
-                    <td>
+                    <td data-label="Entidades Empregadoras (Máx. 3)">
                       {c.rendimentos && c.rendimentos.length > 0 ? (
                         <ul style={{ listStyle: 'none', fontSize: '0.8rem' }}>
                           {c.rendimentos.map((r, i) => (
@@ -331,13 +331,13 @@ export default function ClientesPage() {
                         </span>
                       )}
                     </td>
-                    <td className="tabular">
+                    <td data-label="Renda Total" className="tabular">
                       <strong style={{ color: '#059669', fontSize: '0.92rem' }}>
                         R$ {total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </strong>
                     </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: '0.4rem' }}>
+                    <td data-label="Ações">
+                      <div className="table-actions">
                         <button
                           type="button"
                           className="btn btn-outline btn-sm"
@@ -501,7 +501,7 @@ export default function ClientesPage() {
                 </div>
 
                 {form.rendimentos.map((r, idx) => (
-                  <div key={idx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  <div key={idx} className="rendimento-row">
                     <input
                       className="form-control"
                       style={{ flex: 2 }}

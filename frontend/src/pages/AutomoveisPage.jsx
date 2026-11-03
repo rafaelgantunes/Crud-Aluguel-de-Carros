@@ -208,19 +208,19 @@ export default function AutomoveisPage() {
             <tbody>
               {autosFiltrados.map((auto) => (
                 <tr key={auto.id}>
-                  <td className="mono" style={{ fontWeight: 600, color: '#334155' }}>
+                  <td data-label="Matrícula" className="mono" style={{ fontWeight: 600, color: '#334155' }}>
                     {auto.matricula}
                   </td>
-                  <td>
+                  <td data-label="Veículo (Marca / Modelo)">
                     <strong style={{ color: '#0f172a', fontSize: '0.92rem' }}>
                       {auto.marca} {auto.modelo}
                     </strong>
                   </td>
-                  <td className="tabular">{auto.ano}</td>
-                  <td>
+                  <td data-label="Ano" className="tabular">{auto.ano}</td>
+                  <td data-label="Placa">
                     <span className="plate-badge">{auto.placa}</span>
                   </td>
-                  <td className="tabular">
+                  <td data-label="Diária" className="tabular">
                     <strong>
                       R${' '}
                       {Number(auto.valorDiaria).toLocaleString('pt-BR', {
@@ -229,13 +229,13 @@ export default function AutomoveisPage() {
                     </strong>
                     <span style={{ fontSize: '0.75rem', color: '#64748b' }}>/dia</span>
                   </td>
-                  <td>
+                  <td data-label="Titularidade / Propriedade">
                     {renderBadgeProprietario(auto.tipoProprietario)}
                     <div style={{ fontSize: '0.76rem', color: '#475569', marginTop: '0.25rem' }}>
                       Titular: <strong>{auto.nomeProprietario || 'Não informado'}</strong>
                     </div>
                   </td>
-                  <td>
+                  <td data-label="Status da Frota">
                     {auto.disponivel ? (
                       <span className="badge badge-success">
                         <span className="badge-dot" />

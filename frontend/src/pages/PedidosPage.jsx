@@ -452,7 +452,7 @@ export default function PedidosPage() {
                 );
                 return (
                   <tr key={p.id}>
-                    <td>
+                    <td data-label="Pedido & Período">
                       <div>
                         <strong className="mono" style={{ color: '#0f172a', fontSize: '0.86rem' }}>
                           {p.codigoPedido}
@@ -465,7 +465,7 @@ export default function PedidosPage() {
                         <span>{formatarDataBR(p.dataFim)}</span>
                       </div>
                     </td>
-                    <td>
+                    <td data-label="Contratante & Renda">
                       <strong style={{ color: '#0f172a', fontWeight: 600 }}>
                         {p.cliente?.nome}
                       </strong>
@@ -485,7 +485,7 @@ export default function PedidosPage() {
                         {rendaCliente.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </div>
                     </td>
-                    <td>
+                    <td data-label="Automóvel & Modalidade">
                       <div
                         style={{
                           display: 'flex',
@@ -515,12 +515,12 @@ export default function PedidosPage() {
                         </div>
                       )}
                     </td>
-                    <td className="tabular" style={{ whiteSpace: 'nowrap' }}>
+                    <td data-label="Valor Total" className="tabular" style={{ whiteSpace: 'nowrap' }}>
                       <strong style={{ fontSize: '0.94rem', color: '#0f172a' }}>
                         R$ {Number(p.valorTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </strong>
                     </td>
-                    <td>
+                    <td data-label="Status, Parecer & Crédito">
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
                         {renderBadgeStatus(p.status)}
                         {p.contratoCredito && (
@@ -550,8 +550,8 @@ export default function PedidosPage() {
                         </div>
                       )}
                     </td>
-                    <td>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                    <td data-label="Ações">
+                      <div className="table-actions">
                         {p.status !== 'CANCELADO' && p.status !== 'CONTRATO_EXECUTADO' && (
                           <button
                             type="button"

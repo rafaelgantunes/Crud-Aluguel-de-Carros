@@ -433,7 +433,7 @@ export default function LoginPage() {
               </div>
 
               {clienteForm.rendimentos.map((rend, idx) => (
-                <div key={idx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                <div key={idx} className="rendimento-row">
                   <input
                     className="form-control"
                     style={{ flex: 2 }}

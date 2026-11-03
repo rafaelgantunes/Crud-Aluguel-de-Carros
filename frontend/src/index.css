@@ -725,3 +725,202 @@ tbody tr:hover td {
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-subtle);
 }
+
+.rendimento-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  align-items: center;
+}
+
+.table-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* ============================================================================
+   RESPONSIVIDADE COMPLETA (TABLET & MOBILE - UI/UX PRO MAX)
+   ============================================================================ */
+@media (max-width: 960px) {
+  .navbar {
+    padding: 0.75rem 1rem;
+  }
+
+  .navbar-links {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    overflow-x: auto;
+  }
+
+  .nav-tab {
+    flex: 1;
+    justify-content: center;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .container {
+    margin: 1rem auto;
+    padding: 0 0.85rem 2rem;
+  }
+
+  .card {
+    padding: 1.1rem;
+  }
+
+  /* Converte Tabelas em Cards Empilhados no Mobile/Tablet (100% visível sem cortar) */
+  .table-wrapper {
+    border: none;
+    background: transparent;
+    overflow: visible;
+  }
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+    width: 100% !important;
+  }
+
+  thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  tbody tr {
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+    padding: 0.35rem 0;
+    box-shadow: var(--shadow-xs);
+  }
+
+  tbody td {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    text-align: left;
+    max-width: 100% !important;
+    white-space: normal !important;
+  }
+
+  tbody td:last-child {
+    border-bottom: none;
+    padding-top: 0.75rem;
+  }
+
+  tbody td::before {
+    content: attr(data-label);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    display: block;
+  }
+
+  .table-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 0.45rem;
+  }
+
+  .table-actions .btn {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 640px) {
+  .brand-subtitle {
+    display: none;
+  }
+
+  .user-pill strong {
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+  }
+
+  .kpi-card {
+    padding: 0.9rem;
+  }
+
+  .kpi-value {
+    font-size: 1.25rem;
+  }
+
+  .kpi-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .card-header .btn {
+    width: 100%;
+  }
+
+  .search-box {
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .auth-wrapper {
+    padding: 1rem 0.65rem;
+  }
+
+  .auth-card {
+    padding: 1.35rem 1.1rem;
+  }
+
+  .segmented-control {
+    flex-direction: column;
+  }
+
+  .rendimento-row {
+    flex-direction: column;
+    align-items: stretch;
+    background: #ffffff;
+    padding: 0.65rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .modal-content {
+    padding: 1.15rem;
+    max-height: 94vh;
+  }
+
+  .date-range-pill {
+    white-space: normal;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 420px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
