@@ -1,56 +1,97 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
+import {
+  CarIcon,
+  FileTextIcon,
+  UsersIcon,
+  UserIcon,
+  BuildingIcon,
+  BankIcon,
+  LogOutIcon,
+} from './Icons';
 
 export default function Navbar({ abaAtiva, setAbaAtiva }) {
   const { usuario, logout } = useAuth();
 
-  const formatRole = (role) => {
-    if (role === 'CLIENTE') return '👤 Cliente';
-    if (role === 'AGENTE_EMPRESA') return '🏢 Agente (Empresa)';
-    if (role === 'AGENTE_BANCO') return '🏦 Agente (Banco)';
-    return role;
+  const renderRoleBadge = (role) => {
+    if (role === 'CLIENTE') {
+      return (
+        <span className="role-tag" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+          <UserIcon size={12} /> Cliente
+        </span>
+      );
+    }
+    if (role === 'AGENTE_EMPRESA') {
+      return (
+        <span className="role-tag" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+          <BuildingIcon size={12} /> Agente Empresa
+        </span>
+      );
+    }
+    if (role === 'AGENTE_BANCO') {
+      return (
+        <span className="role-tag" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+          <BankIcon size={12} /> Agente Banco
+        </span>
+      );
+    }
+    return <span className="role-tag">{role}</span>;
   };
 
   return (
     <header className="navbar">
       <div className="navbar-brand">
+        <div className="brand-icon-box">
+          <CarIcon size={22} />
+        </div>
         <div>
-          🚗 AutoRent PUC Minas
-          <span className="subtitle">LAB02 • Sistema de Aluguel de Carros (Spring Boot 4 + React)</span>
+          <span className="brand-title">AutoRent PUC Minas</span>
+          <span className="brand-subtitle">Gestão de Locação &amp; Crédito Automotivo • LAB02</span>
         </div>
       </div>
 
-      <nav className="navbar-links">
+      <nav className="navbar-links" aria-label="Navegação Principal">
         <button
+          type="button"
           className={`nav-tab ${abaAtiva === 'pedidos' ? 'active' : ''}`}
           onClick={() => setAbaAtiva('pedidos')}
         >
-          📋 Pedidos e Contratos
+          <FileTextIcon size={17} />
+          <span>Pedidos e Contratos</span>
         </button>
         <button
+          type="button"
           className={`nav-tab ${abaAtiva === 'clientes' ? 'active' : ''}`}
           onClick={() => setAbaAtiva('clientes')}
         >
-          👥 CRUD de Clientes
+          <UsersIcon size={17} />
+          <span>Contratantes (CRUD)</span>
         </button>
         <button
+          type="button"
           className={`nav-tab ${abaAtiva === 'automoveis' ? 'active' : ''}`}
           onClick={() => setAbaAtiva('automoveis')}
         >
-          🚙 Automóveis e Propriedade
+          <CarIcon size={17} />
+          <span>Frota e Propriedade</span>
         </button>
       </nav>
 
       <div className="navbar-user">
         <div className="user-pill">
-          <span>{formatRole(usuario?.role)}</span>
-          <strong>{usuario?.nome}</strong>
+          {renderRoleBadge(usuario?.role)}
+          <strong style={{ fontWeight: 600 }}>{usuario?.nome}</strong>
         </div>
-        <button className="btn btn-danger btn-sm" onClick={logout}>
-          Sair
+        <button
+          type="button"
+          className="btn btn-danger btn-sm"
+          onClick={logout}
+          title="Encerrar sessão"
+        >
+          <LogOutIcon size={15} />
+          <span>Sair</span>
         </button>
       </div>
     </header>
   );
 }
-
