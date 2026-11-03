@@ -196,20 +196,27 @@ export default function PedidosPage() {
     }
   };
 
+  const formatarDataBR = (isoDate) => {
+    if (!isoDate) return '-';
+    const partes = String(isoDate).split('-');
+    if (partes.length !== 3) return isoDate;
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+  };
+
   const renderBadgeStatus = (status) => {
     switch (status) {
       case 'AGUARDANDO_ANALISE':
         return (
           <span className="badge badge-warning">
             <ClockIcon size={13} />
-            <span>Aguardando Análise Financeira</span>
+            <span>Aguardando Análise</span>
           </span>
         );
       case 'APROVADO_AGUARDANDO_CONTRATO':
         return (
           <span className="badge badge-info">
             <ShieldCheckIcon size={13} />
-            <span>Parecer Positivo (Pronto p/ Contrato)</span>
+            <span>Parecer Positivo</span>
           </span>
         );
       case 'CONTRATO_EXECUTADO':
@@ -429,13 +436,12 @@ export default function PedidosPage() {
           <table>
             <thead>
               <tr>
-                <th>Código / Período</th>
-                <th>Contratante &amp; Renda</th>
-                <th>Automóvel &amp; Modalidade</th>
-                <th>Valor Total</th>
-                <th>Status &amp; Parecer Financeiro</th>
-                <th>Contrato de Crédito</th>
-                <th>Ações</th>
+                <th style={{ width: '18%' }}>Pedido &amp; Período</th>
+                <th style={{ width: '19%' }}>Contratante &amp; Renda</th>
+                <th style={{ width: '22%' }}>Automóvel &amp; Modalidade</th>
+                <th style={{ width: '11%' }}>Valor Total</th>
+                <th style={{ width: '18%' }}>Status, Parecer &amp; Crédito</th>
+                <th style={{ width: '12%' }}>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -447,37 +453,29 @@ export default function PedidosPage() {
                 return (
                   <tr key={p.id}>
                     <td>
-                      <strong className="mono" style={{ color: '#0f172a', fontSize: '0.86rem' }}>
-                        {p.codigoPedido}
-                      </strong>
-                      <div
-                        className="tabular"
-                        style={{
-                          fontSize: '0.76rem',
-                          color: '#475569',
-                          marginTop: '0.25rem',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.3rem',
-                        }}
-                      >
+                      <div>
+                        <strong className="mono" style={{ color: '#0f172a', fontSize: '0.86rem' }}>
+                          {p.codigoPedido}
+                        </strong>
+                      </div>
+                      <div className="date-range-pill">
                         <CalendarIcon size={13} />
-                        <span>
-                          {p.dataInicio} até {p.dataFim}
-                        </span>
+                        <span>{formatarDataBR(p.dataInicio)}</span>
+                        <span className="date-arrow">&rarr;</span>
+                        <span>{formatarDataBR(p.dataFim)}</span>
                       </div>
                     </td>
                     <td>
                       <strong style={{ color: '#0f172a', fontWeight: 600 }}>
                         {p.cliente?.nome}
                       </strong>
-                      <div className="mono" style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                      <div className="mono" style={{ fontSize: '0.74rem', color: '#64748b' }}>
                         {p.cliente?.cpf} • {p.cliente?.profissao}
                       </div>
                       <div
                         className="tabular"
                         style={{
-                          fontSize: '0.77rem',
+                          fontSize: '0.76rem',
                           color: '#059669',
                           fontWeight: 600,
                           marginTop: '0.2rem',
@@ -488,71 +486,68 @@ export default function PedidosPage() {
                       </div>
                     </td>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.45rem',
+                          flexWrap: 'wrap',
+                        }}
+                      >
                         <strong style={{ color: '#0f172a' }}>
                           {p.automovel?.marca} {p.automovel?.modelo}
                         </strong>
                         <span className="plate-badge">{p.automovel?.placa}</span>
                       </div>
-                      <div style={{ marginTop: '0.3rem' }}>
+                      <div style={{ marginTop: '0.28rem' }}>
                         {renderModalidade(p.tipoContrato)}
                       </div>
                       {p.observacoesCliente && (
                         <div
                           style={{
-                            fontSize: '0.75rem',
+                            fontSize: '0.74rem',
                             color: '#64748b',
                             fontStyle: 'italic',
-                            marginTop: '0.25rem',
+                            marginTop: '0.22rem',
                           }}
                         >
                           &ldquo;{p.observacoesCliente}&rdquo;
                         </div>
                       )}
                     </td>
-                    <td className="tabular">
-                      <strong style={{ fontSize: '0.95rem', color: '#0f172a' }}>
+                    <td className="tabular" style={{ whiteSpace: 'nowrap' }}>
+                      <strong style={{ fontSize: '0.94rem', color: '#0f172a' }}>
                         R$ {Number(p.valorTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </strong>
                     </td>
-                    <td style={{ maxWidth: '270px' }}>
-                      {renderBadgeStatus(p.status)}
+                    <td>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                        {renderBadgeStatus(p.status)}
+                        {p.contratoCredito && (
+                          <span className="badge badge-purple mono" title={`Banco: ${p.contratoCredito.bancoAgente?.nome}`}>
+                            <CreditCardIcon size={12} />
+                            <span>
+                              {p.contratoCredito.numeroContrato} ({p.contratoCredito.quantidadeParcelas}x)
+                            </span>
+                          </span>
+                        )}
+                      </div>
                       {p.parecerFinanceiro && (
                         <div
                           style={{
-                            fontSize: '0.76rem',
+                            fontSize: '0.74rem',
                             background: '#f8fafc',
-                            padding: '0.45rem 0.6rem',
+                            padding: '0.4rem 0.55rem',
                             borderRadius: '6px',
-                            marginTop: '0.4rem',
+                            marginTop: '0.38rem',
                             border: '1px solid #e2e8f0',
                             color: '#334155',
+                            lineHeight: 1.35,
                           }}
                         >
                           <strong>{p.agenteAvaliador?.nome || 'Agente'}:</strong>{' '}
                           {p.parecerFinanceiro}
                         </div>
-                      )}
-                    </td>
-                    <td>
-                      {p.contratoCredito ? (
-                        <div style={{ fontSize: '0.77rem' }}>
-                          <span className="badge badge-purple mono">
-                            <CreditCardIcon size={12} />
-                            <span>{p.contratoCredito.numeroContrato}</span>
-                          </span>
-                          <div style={{ marginTop: '0.25rem', color: '#334155' }}>
-                            <strong>{p.contratoCredito.bancoAgente?.nome}</strong>
-                          </div>
-                          <div className="tabular" style={{ color: '#64748b' }}>
-                            {p.contratoCredito.quantidadeParcelas}x • Juros:{' '}
-                            {p.contratoCredito.taxaJurosMensal}% a.m.
-                          </div>
-                        </div>
-                      ) : (
-                        <span style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
-                          Não aplicável
-                        </span>
                       )}
                     </td>
                     <td>
@@ -609,7 +604,7 @@ export default function PedidosPage() {
               })}
               {pedidosFiltrados.length === 0 && (
                 <tr>
-                  <td colSpan="7" style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                  <td colSpan="6" style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
                     Nenhum pedido de aluguel encontrado para os filtros selecionados.
                   </td>
                 </tr>
