@@ -1,5 +1,9 @@
 # Sistema de Aluguel de Carros (AutoRent PUC Minas)
 
+<p align="left">
+  <img src="docs/img/Logo.jfif" alt="Logo AutoRent PUC Minas" width="130" style="border-radius: 18px;" />
+</p>
+
 ![Java](https://img.shields.io/badge/Java-JDK_25-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.x-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
@@ -10,11 +14,11 @@ Sistema Web desenvolvido na disciplina de **Desenvolvimento e Integração de Ap
 
 ---
 
-## Alunos integrantes da equipe
+## Alunos
 
 * **Rafael Gomes Antunes de Oliveira**
 
-## Professores responsáveis
+## Professor responsáveis
 
 * **João Paulo Carneiro Aramuni**
 
