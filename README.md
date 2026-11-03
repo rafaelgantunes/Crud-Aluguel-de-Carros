@@ -1,4 +1,4 @@
-# 🚗 Sistema de Aluguel de Carros — LAB02 (DIAW)
+# Sistema de Aluguel de Carros (AutoRent PUC Minas)
 
 ![Java](https://img.shields.io/badge/Java-JDK_25-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.x-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
@@ -6,88 +6,86 @@
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
 
-> **Pontifícia Universidade Católica de Minas Gerais (PUC Minas)**
-> - **Curso:** Engenharia de Software (2º Período)
-> - **Disciplina:** Desenvolvimento e Integração de Aplicações Web (DIAW)
-> - **Professor:** João Paulo Carneiro Aramuni
-> - **Aluno:** Rafael Gomes Antunes de Oliveira
-> - **Avaliação:** Laboratório 02 — Sistema de Aluguel de Carros (15 pontos)
+Sistema Web desenvolvido na disciplina de **Desenvolvimento e Integração de Aplicações Web (DIAW)** do curso de **Engenharia de Software da PUC Minas (Laboratório 02)**. O objetivo do projeto é apoiar a gestão de aluguéis de automóveis através da Internet, permitindo introduzir, consultar, modificar, avaliar financeiramente e cancelar pedidos de locação, gerenciar contratantes (clientes e seus rendimentos), controlar a titularidade da frota e associar contratos de crédito bancário.
 
 ---
 
-## 📌 Sumário
+## Alunos integrantes da equipe
 
-1. [Sobre o Projeto](#-sobre-o-projeto)
-2. [Stack Tecnológica](#-stack-tecnológica)
-3. [Histórias de Usuário (User Stories)](#-histórias-de-usuário-user-stories)
-4. [Modelagem do Sistema (UML)](#-modelagem-do-sistema-uml)
+* **Rafael Gomes Antunes de Oliveira**
+
+## Professores responsáveis
+
+* **João Paulo Carneiro Aramuni**
+
+---
+
+## Sumário
+
+1. [Descrição e Regras de Negócio](#descrição-e-regras-de-negócio)
+2. [Tecnologias Utilizadas](#tecnologias-utilizadas)
+3. [Histórias de Usuários](#histórias-de-usuários)
+4. [Modelagem do Sistema (UML)](#modelagem-do-sistema-uml)
    - [Diagrama de Casos de Uso](#1-diagrama-de-casos-de-uso)
-   - [Diagrama de Classes (Versão Inicial vs. Versão Final)](#2-diagrama-de-classes-evolução-do-modelo)
-   - [Diagrama de Pacotes — Visão Lógica (Arquitetura MVC e Subsistemas)](#3-diagrama-de-pacotes--visão-lógica-arquitetura-mvc)
-5. [Estrutura do Repositório](#-estrutura-do-repositório)
-6. [Configuração do Banco de Dados (Supabase / Local)](#-configuração-do-banco-de-dados-supabase--local)
-7. [Como Executar o Projeto](#-como-executar-o-projeto)
-8. [Credenciais de Teste (Seed Inicial)](#-credenciais-de-teste-seed-inicial)
-9. [Endpoints da API REST (MVC)](#-endpoints-da-api-rest-mvc)
+   - [Diagrama de Classes (Evolução: Modelo Inicial vs. Modelo Final)](#2-diagrama-de-classes-evolução-do-modelo)
+   - [Diagrama de Pacotes — Visão Lógica (Arquitetura MVC)](#3-diagrama-de-pacotes--visão-lógica-arquitetura-mvc)
+5. [Protótipo e Telas do Sistema](#protótipo-e-telas-do-sistema)
+6. [Instruções de utilização](#instruções-de-utilização)
+7. [Endpoints da API REST (MVC)](#endpoints-da-api-rest-mvc)
+8. [Histórico de versões](#histórico-de-versões)
 
 ---
 
-## 📖 Sobre o Projeto
+## Descrição e Regras de Negócio
 
-Sistema Web para apoio à **gestão de aluguéis de automóveis**, permitindo introduzir, consultar, modificar, avaliar financeiramente e cancelar pedidos através da Internet, além de gerenciar clientes, automóveis e contratos de crédito.
-
-### Principais Regras de Negócio Atendidas:
-1. **Autenticação Obrigatória:** O sistema só pode ser utilizado após cadastro prévio e autenticação (login com usuário e senha), diferenciando os perfis de **Cliente** (`CLIENTE`), **Agente Empresa** (`AGENTE_EMPRESA`) e **Agente Banco** (`AGENTE_BANCO`).
-2. **Gestão de Clientes (CRUD Completo):** Armazena dados de identificação (**RG, CPF, Nome, Endereço**), **profissão** e até **3 entidades empregadoras com seus respectivos rendimentos auferidos** (máximo 3).
-3. **Gestão de Automóveis e Propriedade:** Registra **matrícula, ano, marca, modelo e placa**. Dependendo do tipo de contrato, os automóveis podem ser registrados como propriedade de **clientes, empresas ou bancos**.
+1. **Autenticação Obrigatória:** O sistema só pode ser utilizado após cadastro prévio e autenticação (login com usuário e senha), distinguindo os perfis de **Cliente** (`CLIENTE`), **Agente Empresa** (`AGENTE_EMPRESA`) e **Agente Banco** (`AGENTE_BANCO`).
+2. **Gestão de Contratantes (CRUD de Cliente):** Armazena os dados de identificação civil (**RG, CPF, Nome, Endereço**), **profissão**, as **entidades empregadoras** e os respectivos **rendimentos auferidos (máximo 3)**.
+3. **Gestão de Automóveis e Propriedade:** Registra **matrícula, ano, marca, modelo e placa**. Dependendo do tipo de contrato, os automóveis alugados podem ser registrados como propriedade de **clientes, empresas ou bancos**.
 4. **Ciclo de Vida do Pedido de Aluguel e Análise Financeira:**
-   - **Clientes** podem introduzir, modificar, consultar o status e cancelar seus pedidos de aluguel, bem como executar o contrato após parecer financeiro positivo.
-   - **Agentes (Empresas e Bancos)** podem modificar pedidos e avaliá-los do ponto de vista financeiro (emitindo parecer positivo ou negativo com base nos rendimentos do cliente).
-   - **Contratos de Crédito:** O aluguel de um automóvel pode estar associado a um **contrato de crédito** concedido por um dos bancos agentes.
+   - **Clientes** podem introduzir, modificar, consultar o status e cancelar pedidos de aluguel, além de formalizar a execução do contrato após parecer positivo.
+   - **Agentes (Empresas e Bancos)** podem modificar e avaliar pedidos sob o ponto de vista financeiro e, em caso de parecer positivo, colocá-los à consideração para execução do contrato.
+   - **Contrato de Crédito:** O aluguel de um automóvel pode estar associado a um contrato de crédito concedido por um dos bancos agentes.
 
 ---
 
-## 🛠️ Stack Tecnológica
+## Tecnologias Utilizadas
 
-| Camada | Tecnologia | Versão / Detalhes |
-| :--- | :--- | :--- |
-| **Linguagem Back-end** | Java | JDK 25 |
-| **Framework Back-end** | Spring Boot (Arquitetura MVC) | 4.0.x (Spring Web MVC, Spring Data JPA, Validation) |
-| **Build & Dependências** | Apache Maven | Maven Wrapper (`mvnw` / `pom.xml`) |
-| **Front-end** | React + Vite | React + Vite (SPA Dinâmica) |
-| **Banco de Dados** | Supabase (PostgreSQL) | PostgreSQL em Nuvem (+ H2 para execução imediata local) |
-| **Autenticação** | Sessão / Token (Login Obrigatório) | Usuário, senha e controle de acesso baseado em perfil (Role) |
+* **Linguagem:** Java — JDK 25
+* **Back-end:** Spring Boot 4.0.x (Arquitetura MVC, Spring Web, Spring Data JPA, Jakarta Validation)
+* **Build e Dependências:** Apache Maven (`mvnw` / `pom.xml`)
+* **Front-end:** React 19 + Vite 6 (Design System *UI/UX Pro Max* responsivo)
+* **Banco de Dados:** Supabase (PostgreSQL em nuvem)
 
 ---
 
-## 📝 Histórias de Usuário (User Stories)
+## Histórias de Usuários
 
 | ID | Ator | História de Usuário | Critérios de Aceitação | Prioridade |
 | :-: | :--- | :--- | :--- | :-: |
-| **US01** | Usuário (Cliente / Agente) | **Como** usuário do sistema, **quero** realizar meu cadastro prévio e fazer login com usuário e senha **para** ter acesso autenticado às funcionalidades do sistema. | - Bloquear acesso às telas internas sem login;<br>- Validar credenciais e retornar perfil (`CLIENTE`, `AGENTE_EMPRESA`, `AGENTE_BANCO`). | Alta |
-| **US02** | Cliente / Administrador | **Como** cliente, **quero** cadastrar, visualizar, editar e excluir meus dados pessoais (RG, CPF, Nome, Endereço, Profissão) e meus rendimentos **para** manter meu cadastro atualizado para análise financeira. | - CRUD completo de Cliente;<br>- Permitir adicionar de 1 até no **máximo 3** entidades empregadoras com seus respectivos rendimentos auferidos;<br>- Impedir mais de 3 rendimentos. | Alta |
-| **US03** | Cliente | **Como** cliente autenticado, **quero** introduzir um novo pedido de aluguel escolhendo um automóvel disponível, período e modalidade de contrato **para** alugar um veículo pela Internet. | - Calcular automaticamente o valor total com base nas diárias;<br>- Criar pedido com status inicial `AGUARDANDO_ANALISE`. | Alta |
-| **US04** | Cliente | **Como** cliente autenticado, **quero** consultar o status detalhado, modificar as datas/observações ou cancelar meu pedido de aluguel **para** gerenciar minhas solicitações. | - Exibir status atualizado e parecer financeiro;<br>- Permitir modificação ou cancelamento enquanto o contrato não estiver finalizado. | Alta |
-| **US05** | Agente (Empresa / Banco) | **Como** agente autenticado, **quero** visualizar os dados financeiros do cliente (rendimentos e empregadores) e avaliar os pedidos de aluguel **para** emitir um parecer financeiro positivo ou negativo. | - Exibir renda total e empregadores do cliente;<br>- Em caso de parecer positivo, disponibilizar o pedido (`APROVADO_AGUARDANDO_CONTRATO`) para execução do contrato. | Alta |
-| **US06** | Agente (Banco) | **Como** banco agente, **quero** associar um contrato de crédito (valor financiado, taxa de juros e parcelas) a um pedido de aluguel aprovado **para** viabilizar o financiamento do veículo. | - Gerar número de contrato de crédito vinculado ao banco agente;<br>- Associar o contrato de crédito ao pedido de aluguel. | Média |
-| **US07** | Cliente / Agente | **Como** parte contratante, **quero** executar o contrato de um pedido aprovado financeiramente **para** formalizar a locação e atualizar o registro de propriedade do automóvel conforme o tipo de contrato. | - Alterar status para `CONTRATO_EXECUTADO`;<br>- Atualizar propriedade do automóvel (`CLIENTE`, `EMPRESA` ou `BANCO`) conforme o tipo de contrato. | Média |
-| **US08** | Agente (Empresa / Banco) | **Como** agente, **quero** cadastrar e gerenciar automóveis (matrícula, ano, marca, modelo, placa e proprietário) **para** manter a frota atualizada no sistema. | - Validar unicidade de matrícula e placa;<br>- Registrar tipo de proprietário (`CLIENTE`, `EMPRESA`, `BANCO`). | Média |
+| **US01** | Usuário (Cliente / Agente) | **Como** usuário do sistema, **quero** realizar meu cadastro prévio e fazer login com usuário e senha **para** ter acesso autenticado às funcionalidades do sistema. | - Restringir o acesso às telas internas apenas a usuários autenticados;<br>- Validar credenciais e carregar perfil (`CLIENTE`, `AGENTE_EMPRESA`, `AGENTE_BANCO`). | Alta |
+| **US02** | Cliente / Agente | **Como** cliente, **quero** cadastrar, visualizar, atualizar e remover meus dados pessoais (RG, CPF, Nome, Endereço, Profissão) e meus rendimentos **para** manter meu cadastro apto à análise financeira. | - CRUD completo de Cliente;<br>- Permitir registrar até no **máximo 3** entidades empregadoras e respectivos rendimentos auferidos. | Alta |
+| **US03** | Cliente | **Como** cliente autenticado, **quero** introduzir um novo pedido de aluguel selecionando um automóvel, período e modalidade de contrato **para** solicitar a locação pela Internet. | - Calcular automaticamente o valor total conforme as diárias;<br>- Registrar o pedido com status inicial `AGUARDANDO_ANALISE`. | Alta |
+| **US04** | Cliente | **Como** cliente autenticado, **quero** consultar o status, modificar os dados ou cancelar meu pedido de aluguel **para** gerenciar minhas solicitações. | - Exibir status atualizado, datas e parecer financeiro;<br>- Permitir modificação ou cancelamento antes da execução final. | Alta |
+| **US05** | Agente (Empresa / Banco) | **Como** agente autenticado, **quero** analisar o dossiê financeiro do contratante (rendimentos e empregadores) e avaliar os pedidos de aluguel **para** emitir um parecer financeiro positivo ou negativo. | - Exibir soma de rendimentos e vínculos empregatícios;<br>- Em caso de parecer positivo, alterar status para `APROVADO_AGUARDANDO_CONTRATO`. | Alta |
+| **US06** | Agente (Banco) | **Como** banco agente, **quero** conceder e associar um contrato de crédito (valor financiado, taxa de juros e parcelas) a um pedido aprovado **para** financiar a locação. | - Gerar número único de contrato (`CRED-...`) vinculado ao banco agente;<br>- Associar o contrato de crédito ao pedido de aluguel. | Média |
+| **US07** | Cliente / Agente | **Como** contratante, **quero** executar o contrato de um pedido aprovado financeiramente **para** formalizar a locação e atualizar o registro de propriedade do veículo. | - Alterar status do pedido para `CONTRATO_EXECUTADO`;<br>- Atualizar a titularidade do automóvel (`CLIENTE`, `EMPRESA` ou `BANCO`) conforme a modalidade contratada. | Média |
+| **US08** | Agente (Empresa / Banco) | **Como** agente, **quero** cadastrar e consultar a frota de automóveis (matrícula, ano, marca, modelo, placa e proprietário) **para** manter os veículos disponíveis no sistema. | - Validar unicidade de matrícula e placa;<br>- Indicar titularidade e disponibilidade do automóvel. | Média |
 
 ---
 
-## 📐 Modelagem do Sistema (UML)
+## Modelagem do Sistema (UML)
 
-Todos os arquivos fontes dos diagramas encontram-se versionados no diretório [`docs/uml/`](docs/uml/).
+Os arquivos-fonte dos modelos UML estão versionados em [`docs/uml/`](docs/uml/).
 
 ### 1. Diagrama de Casos de Uso
 
-Representa as interações dos atores (**Cliente**, **Agente Empresa** e **Agente Banco**) com o sistema após autenticação obrigatória:
+Fonte: [`docs/uml/casos_de_uso.mmd`](docs/uml/casos_de_uso.mmd)
 
 ```mermaid
 flowchart LR
-    Cliente(["👤 Cliente (Usuário Individual)"])
-    AgenteEmpresa(["🏢 Agente (Empresa Locadora)"])
-    AgenteBanco(["🏦 Agente (Banco)"])
+    Cliente(["Cliente (Usuário Individual)"])
+    AgenteEmpresa(["Agente (Empresa Locadora)"])
+    AgenteBanco(["Agente (Banco)"])
 
     subgraph Sistema["Sistema de Gestão de Aluguel de Carros (Web)"]
         UC01("UC01 - Realizar Cadastro Prévio")
@@ -134,9 +132,9 @@ flowchart LR
 
 ### 2. Diagrama de Classes (Evolução do Modelo)
 
-Conforme solicitado nas instruções da **Apresentação Final**, apresentamos abaixo o **Modelo Inicial (v1)** concebido na análise preliminar e o **Modelo Final Revisado (v2)** alinhado 100% ao código implementado em Java (Spring Boot MVC).
+Atendendo aos critérios de avaliação da **Apresentação Final**, apresentamos a comparação entre o **Modelo Inicial (v1)** e o **Modelo Final Revisado (v2)** alinhado ao código-fonte.
 
-#### 🔹 Versão 1 — Modelo Conceitual Inicial ([`diagrama_de_classes_v1_inicial.mmd`](docs/uml/diagrama_de_classes_v1_inicial.mmd))
+#### Versão 1 — Modelo Conceitual Inicial ([`diagrama_de_classes_v1_inicial.mmd`](docs/uml/diagrama_de_classes_v1_inicial.mmd))
 
 ```mermaid
 classDiagram
@@ -186,7 +184,7 @@ classDiagram
     Agente "1" --> "0..*" ContratoCredito : concede
 ```
 
-#### 🔹 Versão 2 — Modelo de Classes Final Implementado ([`diagrama_de_classes_v2_final.mmd`](docs/uml/diagrama_de_classes_v2_final.mmd))
+#### Versão 2 — Modelo de Classes Final Implementado ([`diagrama_de_classes_v2_final.mmd`](docs/uml/diagrama_de_classes_v2_final.mmd))
 
 ```mermaid
 classDiagram
@@ -305,29 +303,29 @@ classDiagram
     Automovel --> TipoProprietario
 ```
 
-#### 📊 Comparativo de Evolução (Modelo Inicial vs. Modelo Final Implementado)
+#### Quadro Comparativo de Modificações (Modelo Inicial vs. Modelo Final)
 
-| Aspecto | Modelo Inicial (v1) | Modelo Final Revisado (v2) | Justificativa Técnica / Alinhamento com Requisitos |
+| Aspecto | Modelo Inicial (v1) | Modelo Final Revisado (v2) | Justificativa de Projeto |
 | :--- | :--- | :--- | :--- |
-| **Rendimentos e Empregadores** | Lista simples `List<Double>` na classe `Cliente`. | Entidade dedicada `RendimentoCliente` (`entidadeEmpregadora`, `valorRendimento`) com composição `0..3`. | O requisito exige armazenar **tanto as entidades empregadoras quanto os respectivos rendimentos auferidos (máximo 3)**. |
-| **Propriedade do Automóvel** | Não possuía atributo de titularidade explícito. | Adicionado `TipoProprietario` (`CLIENTE`, `EMPRESA`, `BANCO`) e `nomeProprietario` em `Automovel`. | Atende à regra: *"Dependendo do tipo de contrato, os automóveis alugados podem ser registrados como propriedade dos clientes, empresas ou bancos"*. |
-| **Fluxo de Status do Pedido** | Atributo texto livre `status` e `boolean parecerFinanceiro`. | Enumeração `StatusPedido` com máquina de estados completa e justificativa textual em `parecerFinanceiro`. | Permite rastrear desde a introdução (`AGUARDANDO_ANALISE`), aprovação financeira (`APROVADO_AGUARDANDO_CONTRATO`) até a `CONTRATO_EXECUTADO` ou `CANCELADO`. |
-| **Contrato de Crédito** | Apenas `id` e `valor`. | Classe completa `ContratoCredito` vinculada ao `Agente` (Banco), contendo `numeroContrato`, `taxaJurosMensal` e `quantidadeParcelas`. | Atende à associação de aluguéis com contratos de crédito concedidos por bancos agentes. |
+| **Empregadores e Rendimentos** | `List<Double>` simples em `Cliente`. | Entidade `RendimentoCliente` (`entidadeEmpregadora`, `valorRendimento`) com cardinalidade `0..3`. | Atende à regra de armazenar tanto o nome das entidades empregadoras quanto os respectivos rendimentos (máximo 3). |
+| **Titularidade do Automóvel** | Sem atributo de propriedade. | Adicionado `TipoProprietario` (`CLIENTE`, `EMPRESA`, `BANCO`) e `nomeProprietario` em `Automovel`. | Permite atualizar o registro de propriedade do veículo conforme o tipo de contrato executado. |
+| **Ciclo do Pedido** | Atributo `String status` e `boolean parecerFinanceiro`. | Enum `StatusPedido` e campo detalhado `parecerFinanceiro`. | Controla todas as etapas desde a introdução até a aprovação financeira, execução do contrato ou cancelamento. |
+| **Contrato de Crédito** | Apenas `id` e `valor`. | Entidade completa com `numeroContrato`, `bancoAgente`, `taxaJurosMensal` e `quantidadeParcelas`. | Vincula o financiamento diretamente ao banco agente concessor. |
 
 ---
 
 ### 3. Diagrama de Pacotes — Visão Lógica (Arquitetura MVC)
 
-Atendendo à especificação de que *"o sistema pode ser subdividido em dois subsistemas: um para gestão de pedidos e contratos; e outro para a construção dinâmica das páginas web"*, o diagrama de pacotes abaixo ilustra a arquitetura MVC e a integração entre os subsistemas:
+Fonte: [`docs/uml/diagrama_de_pacotes_mvc.mmd`](docs/uml/diagrama_de_pacotes_mvc.mmd)
 
 ```mermaid
 flowchart TB
     subgraph SubsistemaWeb["Subsistema 2: Construção Dinâmica das Páginas Web (Front-end React + Vite)"]
         direction LR
-        Pages["📦 pages\n(Login, Clientes, Automóveis, Pedidos)"]
-        Components["📦 components\n(Navbar, StatusBadge, Modals)"]
-        ServicesFE["📦 services\n(api.js - Cliente HTTP REST)"]
-        ContextFE["📦 context\n(AuthContext - Autenticação)"]
+        Pages["pages\n(LoginPage, ClientesPage, AutomoveisPage, PedidosPage)"]
+        Components["components\n(Navbar, Icons)"]
+        ServicesFE["services\n(api.js - Cliente HTTP REST)"]
+        ContextFE["context\n(AuthContext - Sessão/Autenticação)"]
         Pages --> Components
         Pages --> ContextFE
         Pages --> ServicesFE
@@ -335,12 +333,12 @@ flowchart TB
 
     subgraph SubsistemaGestao["Subsistema 1: Gestão de Pedidos, Clientes e Contratos (Back-end Spring Boot 4 MVC)"]
         direction TB
-        Controller["📦 br.pucminas.diaw.aluguel.controller\n(AuthController, ClienteController, AutomovelController, PedidoAluguelController)"]
-        DTO["📦 br.pucminas.diaw.aluguel.dto\n(LoginDTO, ClienteDTO, AvaliacaoFinanceiraDTO, PedidoAluguelDTO)"]
-        Service["📦 br.pucminas.diaw.aluguel.service\n(AuthService, ClienteService, AutomovelService, PedidoAluguelService)"]
-        Repository["📦 br.pucminas.diaw.aluguel.repository\n(UsuarioRepository, ClienteRepository, AutomovelRepository, PedidoAluguelRepository, ContratoCreditoRepository)"]
-        Model["📦 br.pucminas.diaw.aluguel.model\n(Usuario, Cliente, RendimentoCliente, Agente, Automovel, PedidoAluguel, ContratoCredito)"]
-        Config["📦 br.pucminas.diaw.aluguel.config\n(CorsConfig, DataInitializer)"]
+        Controller["br.pucminas.diaw.aluguel.controller\n(AuthController, ClienteController, AutomovelController, PedidoAluguelController)"]
+        DTO["br.pucminas.diaw.aluguel.dto\n(LoginRequestDTO, ClienteRequestDTO, AvaliacaoFinanceiraDTO, PedidoAluguelRequestDTO)"]
+        Service["br.pucminas.diaw.aluguel.service\n(AuthService, ClienteService, AutomovelService, PedidoAluguelService)"]
+        Repository["br.pucminas.diaw.aluguel.repository\n(UsuarioRepository, ClienteRepository, AutomovelRepository, PedidoAluguelRepository, ContratoCreditoRepository)"]
+        Model["br.pucminas.diaw.aluguel.model\n(Usuario, Cliente, RendimentoCliente, Agente, Automovel, PedidoAluguel, ContratoCredito)"]
+        Config["br.pucminas.diaw.aluguel.config\n(CorsConfig, DataInitializer)"]
 
         Controller --> DTO
         Controller --> Service
@@ -349,8 +347,8 @@ flowchart TB
         Repository --> Model
     end
 
-    subgraph Persistencia["Camada de Persistência"]
-        Supabase[("🗄️ Supabase (PostgreSQL)\n/ H2 Database (Perfil Local)")]
+    subgraph Persistencia["Camada de Persistência em Nuvem"]
+        Supabase[("Supabase (PostgreSQL)")]
     end
 
     ServicesFE ==>|"HTTP / JSON (REST API)"| Controller
@@ -359,78 +357,61 @@ flowchart TB
 
 ---
 
-## 📂 Estrutura do Repositório
+## Protótipo e Telas do Sistema
 
-```text
-LAB2/
-├── README.md                                  # Documentação completa (Template PUC Minas)
-├── DIAW_-_LABORATÓRIO_02_...pdf               # Especificação oficial do trabalho
-├── docs/
-│   ├── sql/
-│   │   └── supabase_schema.sql                # Script DDL PostgreSQL para o Supabase
-│   └── uml/
-│       ├── casos_de_uso.mmd                   # Diagrama de Casos de Uso
-│       ├── diagrama_de_classes_v1_inicial.mmd # Modelo de Classes Inicial (v1)
-│       ├── diagrama_de_classes_v2_final.mmd   # Modelo de Classes Final Revisado (v2)
-│       └── diagrama_de_pacotes_mvc.mmd        # Diagrama de Pacotes (Visão Lógica MVC)
-├── backend/                                   # Subsistema 1: Spring Boot 4.0.x + Java 25 (MVC)
-│   ├── pom.xml
-│   └── src/main/
-│       ├── java/br/pucminas/diaw/aluguel/
-│       │   ├── config/                        # CORS e Carga Inicial de Dados (Seed)
-│       │   ├── controller/                    # Camada Controller (REST MVC)
-│       │   ├── dto/                           # Objetos de Transferência de Dados
-│       │   ├── exception/                     # Tratamento Global de Erros e Regras
-│       │   ├── model/                         # Camada Model (Entidades JPA e Enums)
-│       │   ├── repository/                    # Camada Repository (Spring Data JPA)
-│       │   └── service/                       # Camada Service (Regras de Negócio)
-│       └── resources/
-│           ├── application.properties         # Configuração padrão (H2 + variáveis Supabase)
-│           └── application-supabase.properties# Perfil dedicado para conexão Supabase PostgreSQL
-└── frontend/                                  # Subsistema 2: React + Vite (Páginas Web Dinâmicas)
-    ├── package.json
-    ├── vite.config.js
-    └── src/
-        ├── context/AuthContext.jsx            # Controle de autenticação obrigatório
-        ├── services/api.js                    # Integração REST com o Spring Boot
-        ├── components/                        # Barra de navegação, indicadores de status
-        └── pages/                             # Telas: Login/Cadastro, CRUD Clientes, Frota e Pedidos
-```
+Abaixo estão as capturas de tela do protótipo funcional desenvolvido com **React + Vite** integrado ao **Spring Boot 4** e **Supabase**:
+
+### 1. Tela de Autenticação Obrigatória e Cadastro Prévio
+Restringe o acesso apenas a usuários autenticados, oferecendo abas para **Autenticação**, **Novo Cliente** (com até 3 vínculos empregatícios) e **Novo Agente** (Empresa ou Banco), além de acesso rápido de demonstração.
+
+![Tela de Login e Autenticação](docs/img/01_login_autenticacao.jpg)
 
 ---
 
-## 🗄️ Configuração do Banco de Dados (Supabase / Local)
+### 2. Painel de Gestão de Pedidos de Aluguel e Execução de Contratos
+Apresenta indicadores executivos (KPIs), busca instantânea, filtro por status, acompanhamento de pareceres financeiros, contratos de crédito vinculados (`CRED-...`) e ações para **Modificar**, **Avaliar Finanças**, **Executar Contrato** e **Cancelar**.
 
-O back-end está preparado para rodar **imediatamente** em modo de desenvolvimento local (com banco em memória H2 pré-populado automaticamente pelo `DataInitializer`) ou conectado ao **Supabase (PostgreSQL)** em nuvem.
-
-### Como conectar ao seu projeto Supabase:
-1. Crie um projeto gratuito em [https://supabase.com](https://supabase.com).
-2. No painel do Supabase, acesse **SQL Editor** e execute o script [`docs/sql/supabase_schema.sql`](docs/sql/supabase_schema.sql) (ou deixe o Hibernate criar automaticamente via `ddl-auto=update`).
-3. Vá em **Project Settings > Database > Connection String (JDBC)** e defina as variáveis de ambiente ou edite [`backend/src/main/resources/application-supabase.properties`](backend/src/main/resources/application-supabase.properties):
-   ```properties
-   SUPABASE_DB_URL=jdbc:postgresql://aws-0-sa-east-1.pooler.supabase.com:6543/postgres?prepareThreshold=0
-   SUPABASE_DB_USER=postgres.seu_projeto_id
-   SUPABASE_DB_PASSWORD=sua_senha_do_supabase
-   ```
-4. Inicie o Spring Boot com o perfil `supabase`:
-   ```bash
-   ./mvnw spring-boot:run -Dspring-boot.run.profiles=supabase
-   ```
+![Gestão de Pedidos de Aluguel e Contratos](docs/img/02_pedidos_contratos.jpg)
 
 ---
 
-## 🚀 Como Executar o Projeto
+### 3. Modal de Introdução de Novo Pedido de Aluguel
+Permite ao contratante escolher o automóvel desejado, definir o período de locação, selecionar a modalidade de contrato/registro de propriedade (`Empresa`, `Banco` ou `Cliente`) e enviar para análise financeira.
 
-### 1. Executando o Back-end (Spring Boot 4 + JDK 25)
-No terminal, entre na pasta `backend`:
+![Modal Introduzir Novo Pedido de Aluguel](docs/img/05_modal_novo_pedido.jpg)
+
+---
+
+### 4. Gestão de Contratantes (CRUD Completo de Clientes)
+Gerencia os dados civis do contratante (**RG, CPF, Nome, Endereço e Profissão**) e suas **entidades empregadoras com os respectivos rendimentos auferidos (máximo 3)**, calculando automaticamente a renda total para análise de crédito.
+
+![Gestão de Contratantes - CRUD de Clientes](docs/img/03_crud_clientes.jpg)
+
+---
+
+### 5. Frota de Automóveis e Registro de Propriedade
+Lista todos os veículos cadastrados (**matrícula, marca, modelo, ano, placa Mercosul e valor da diária**), destacando a titularidade jurídica atual (`Propriedade: EMPRESA`, `Propriedade: BANCO` ou `Propriedade: CLIENTE`) e o status de disponibilidade.
+
+![Frota de Automóveis e Registro de Propriedade](docs/img/04_frota_automoveis.jpg)
+
+---
+
+## Instruções de utilização
+
+### Pré-requisitos
+* **Java JDK 25** instalado
+* **Node.js 20+** e **npm** instalados
+* Banco de dados **Supabase (PostgreSQL)** configurado em [`backend/src/main/resources/application.properties`](backend/src/main/resources/application.properties) (script DDL disponível em [`docs/sql/supabase_schema.sql`](docs/sql/supabase_schema.sql))
+
+### Passo 1 — Executar o Back-end (Spring Boot 4.0.x)
 ```bash
 cd backend
 ./mvnw spring-boot:run
 ```
-> O servidor iniciará em `http://localhost:8080`. Na inicialização, o componente `DataInitializer` cria automaticamente usuários de teste (Clientes, Empresa Locadora e Banco Agente), automóveis e pedidos de exemplo.
+> O servidor REST MVC iniciará em `http://localhost:8080`.
 
-### 2. Executando o Front-end (React + Vite)
-Em outro terminal, entre na pasta `frontend`:
+### Passo 2 — Executar o Front-end (React + Vite)
+Em outro terminal:
 ```bash
 cd frontend
 npm install
@@ -438,37 +419,40 @@ npm run dev
 ```
 > A aplicação web estará disponível em `http://localhost:5173`.
 
----
+### Credenciais de Teste Pré-Cadastradas
 
-## 🔑 Credenciais de Teste (Seed Inicial)
-
-Você pode criar novos clientes ou agentes diretamente na tela de **Cadastro Prévio**, ou utilizar as contas pré-cadastradas abaixo com um clique na tela de Login:
-
-| Perfil | Usuário (`username`) | Senha | Papel no Sistema |
+| Perfil | Usuário (`username`) | Senha | Permissões Principais |
 | :--- | :---: | :---: | :--- |
-| 👤 **Cliente Individual** | `cliente` | `123456` | Introduz, consulta, modifica, cancela pedidos e executa contratos aprovados. |
-| 🏢 **Agente (Empresa)** | `empresa` | `123456` | Avalia pedidos financeiramente, modifica pedidos e gerencia frota de veículos. |
-| 🏦 **Agente (Banco)** | `banco` | `123456` | Avalia pedidos financeiramente, **concede contratos de crédito** e gerencia veículos. |
+| **Cliente Individual** | `cliente` | `123456` | Introduzir, consultar, modificar e cancelar pedidos; executar contratos aprovados. |
+| **Agente (Empresa)** | `empresa` | `123456` | Avaliar pedidos financeiramente, modificar pedidos e gerenciar frota de automóveis. |
+| **Agente (Banco)** | `banco` | `123456` | Avaliar pedidos financeiramente, conceder contratos de crédito e gerenciar automóveis. |
 
 ---
 
-## 🌐 Endpoints da API REST (MVC)
+## Endpoints da API REST (MVC)
 
-| Método | Endpoint | Descrição | Perfis Permitidos |
-| :---: | :--- | :--- | :--- |
-| `POST` | `/api/auth/login` | Autentica usuário (cliente ou agente) com login e senha | Público |
-| `POST` | `/api/auth/registro-agente` | Cadastra novo Agente (Empresa ou Banco) | Público |
-| `GET` | `/api/clientes` | Lista todos os clientes com seus rendimentos (máx. 3) | Autenticado |
-| `GET` | `/api/clientes/{id}` | Busca dados detalhados de um cliente por ID | Autenticado |
-| `POST` | `/api/clientes` | Cria um novo Cliente (CRUD) com até 3 empregadores/rendimentos | Público / Autenticado |
-| `PUT` | `/api/clientes/{id}` | Atualiza dados de identificação, profissão e rendimentos do Cliente | Cliente / Agente |
-| `DELETE` | `/api/clientes/{id}` | Remove o cadastro de um Cliente | Cliente / Agente |
-| `GET` | `/api/automoveis` | Lista a frota de automóveis e seus proprietários atuais | Autenticado |
-| `POST` | `/api/automoveis` | Cadastra novo automóvel (matrícula, ano, marca, modelo, placa) | Agente |
-| `GET` | `/api/pedidos` | Lista pedidos de aluguel (filtrável por `clienteId`) | Autenticado |
-| `POST` | `/api/pedidos` | Introduz um novo pedido de aluguel | Cliente |
-| `PUT` | `/api/pedidos/{id}` | Modifica um pedido de aluguel existente | Cliente / Agente |
-| `PATCH` | `/api/pedidos/{id}/avaliar` | Avalia financeiramente o pedido e opcionalmente associa Contrato de Crédito | Agente (Empresa/Banco) |
-| `PATCH` | `/api/pedidos/{id}/executar-contrato` | Executa o contrato após parecer financeiro positivo | Cliente / Agente |
-| `PATCH` | `/api/pedidos/{id}/cancelar` | Cancela um pedido de aluguel | Cliente / Agente |
+| Método | Endpoint | Descrição |
+| :---: | :--- | :--- |
+| `POST` | `/api/auth/login` | Autentica usuário (cliente ou agente) com login e senha |
+| `POST` | `/api/auth/registro-agente` | Cadastra novo Agente (`EMPRESA` ou `BANCO`) |
+| `GET` | `/api/clientes` | Lista todos os clientes e seus rendimentos (máx. 3) |
+| `POST` | `/api/clientes` | Cria um novo Cliente (CRUD) com até 3 empregadores/rendimentos |
+| `PUT` | `/api/clientes/{id}` | Atualiza dados de identificação, profissão e rendimentos do Cliente |
+| `DELETE` | `/api/clientes/{id}` | Remove o cadastro de um Cliente |
+| `GET` | `/api/automoveis` | Lista a frota de automóveis e seus proprietários atuais |
+| `POST` | `/api/automoveis` | Cadastra novo automóvel (matrícula, ano, marca, modelo, placa) |
+| `GET` | `/api/pedidos` | Lista pedidos de aluguel (filtrável por `clienteId`) |
+| `POST` | `/api/pedidos` | Introduz um novo pedido de aluguel |
+| `PUT` | `/api/pedidos/{id}` | Modifica um pedido de aluguel existente |
+| `PATCH` | `/api/pedidos/{id}/avaliar` | Registra parecer financeiro do Agente e associa Contrato de Crédito |
+| `PATCH` | `/api/pedidos/{id}/executar-contrato` | Executa o contrato aprovado e atualiza a propriedade do veículo |
+| `PATCH` | `/api/pedidos/{id}/cancelar` | Cancela um pedido de aluguel |
 
+---
+
+## Histórico de versões
+
+* **0.1.0** — Modelagem inicial do sistema: Histórias de Usuário, Diagrama de Casos de Uso, Diagrama de Classes (v1) e Diagrama de Pacotes MVC.
+* **0.2.0** — Implementação do Back-end em Java 25 + Spring Boot 4.0.x integrado ao Supabase (PostgreSQL), incluindo autenticação, CRUD de Clientes e gestão de pedidos/contratos.
+* **0.3.0** — Implementação do Front-end em React + Vite e revisão do Diagrama de Classes (v2) alinhado à arquitetura final.
+* **1.0.0** — Refatoração visual completa com Design System *UI/UX Pro Max*, responsividade mobile/tablet e documentação final com protótipo.
