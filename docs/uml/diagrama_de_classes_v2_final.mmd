@@ -1,0 +1,115 @@
+classDiagram
+    direction TB
+
+    class RoleUsuario {
+        <<enumeration>>
+        CLIENTE
+        AGENTE_EMPRESA
+        AGENTE_BANCO
+    }
+
+    class StatusPedido {
+        <<enumeration>>
+        AGUARDANDO_ANALISE
+        EM_ANALISE_FINANCEIRA
+        APROVADO_AGUARDANDO_CONTRATO
+        CONTRATO_EXECUTADO
+        REJEITADO
+        CANCELADO
+    }
+
+    class TipoProprietario {
+        <<enumeration>>
+        CLIENTE
+        EMPRESA
+        BANCO
+    }
+
+    class TipoContrato {
+        <<enumeration>>
+        PADRAO_EMPRESA
+        CREDITO_BANCO
+        PROPRIEDADE_CLIENTE
+    }
+
+    class Usuario {
+        -Long id
+        -String username
+        -String senha
+        -String nome
+        -RoleUsuario role
+        -LocalDateTime criadoEm
+    }
+
+    class Cliente {
+        -String rg
+        -String cpf
+        -String endereco
+        -String profissao
+        -List~RendimentoCliente~ rendimentos
+        +adicionarRendimento(RendimentoCliente) void
+        +calcularRendaTotal() BigDecimal
+    }
+
+    class RendimentoCliente {
+        -Long id
+        -String entidadeEmpregadora
+        -BigDecimal valorRendimento
+    }
+
+    class Agente {
+        -String cnpj
+        -String razaoSocial
+        -String tipoAgente
+    }
+
+    class Automovel {
+        -Long id
+        -String matricula
+        -Integer ano
+        -String marca
+        -String modelo
+        -String placa
+        -BigDecimal valorDiaria
+        -Boolean disponivel
+        -TipoProprietario tipoProprietario
+        -String nomeProprietario
+    }
+
+    class ContratoCredito {
+        -Long id
+        -String numeroContrato
+        -BigDecimal valorFinanciado
+        -BigDecimal taxaJurosMensal
+        -Integer quantidadeParcelas
+        -String statusCredito
+        -LocalDateTime dataConcessao
+    }
+
+    class PedidoAluguel {
+        -Long id
+        -String codigoPedido
+        -LocalDate dataInicio
+        -LocalDate dataFim
+        -TipoContrato tipoContrato
+        -BigDecimal valorTotal
+        -StatusPedido status
+        -String parecerFinanceiro
+        -String observacoesCliente
+        -LocalDateTime criadoEm
+        -LocalDateTime atualizadoEm
+    }
+
+    Usuario <|-- Cliente
+    Usuario <|-- Agente
+    Usuario --> RoleUsuario
+    Cliente "1" *-- "0..3" RendimentoCliente : possui (máx 3)
+    Cliente "1" --> "0..*" PedidoAluguel : solicita
+    Agente "0..1" --> "0..*" PedidoAluguel : avalia financeiramente
+    Agente "1" --> "0..*" ContratoCredito : concede (Banco)
+    PedidoAluguel "0..*" --> "1" Automovel : aluga
+    PedidoAluguel "0..1" --> "0..1" ContratoCredito : associado a
+    PedidoAluguel --> StatusPedido
+    PedidoAluguel --> TipoContrato
+    Automovel --> TipoProprietario
+

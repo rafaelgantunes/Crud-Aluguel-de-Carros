@@ -1,0 +1,35 @@
+flowchart TB
+    subgraph SubsistemaWeb["Subsistema 2: Construção Dinâmica das Páginas Web (Front-end React + Vite)"]
+        direction LR
+        Pages["📦 pages\n(LoginPage, ClientesPage, AutomoveisPage, PedidosPage)"]
+        Components["📦 components\n(Navbar, StatusBadge, Modals)"]
+        ServicesFE["📦 services\n(api.js - Cliente HTTP REST)"]
+        ContextFE["📦 context\n(AuthContext - Sessão/Token)"]
+        Pages --> Components
+        Pages --> ContextFE
+        Pages --> ServicesFE
+    end
+
+    subgraph SubsistemaGestao["Subsistema 1: Gestão de Pedidos, Clientes e Contratos (Back-end Spring Boot 4 MVC)"]
+        direction TB
+        Controller["📦 br.pucminas.diaw.aluguel.controller\n(AuthController, ClienteController, AutomovelController, PedidoAluguelController)"]
+        DTO["📦 br.pucminas.diaw.aluguel.dto\n(LoginDTO, ClienteDTO, AvaliacaoFinanceiraDTO, PedidoAluguelDTO)"]
+        Service["📦 br.pucminas.diaw.aluguel.service\n(AuthService, ClienteService, AutomovelService, PedidoAluguelService)"]
+        Repository["📦 br.pucminas.diaw.aluguel.repository\n(UsuarioRepository, ClienteRepository, AutomovelRepository, PedidoAluguelRepository, ContratoCreditoRepository)"]
+        Model["📦 br.pucminas.diaw.aluguel.model\n(Usuario, Cliente, RendimentoCliente, Agente, Automovel, PedidoAluguel, ContratoCredito)"]
+        Config["📦 br.pucminas.diaw.aluguel.config\n(CorsConfig, DataInitializer)"]
+
+        Controller --> DTO
+        Controller --> Service
+        Service --> Repository
+        Service --> Model
+        Repository --> Model
+    end
+
+    subgraph Persistencia["Camada de Dados (Nuvem / Local)"]
+        Supabase[("🗄️ Supabase (PostgreSQL)\n/ H2 In-Memory (Dev Profile)")]
+    end
+
+    ServicesFE ==>|"HTTP / JSON (REST API)"| Controller
+    Repository ==>|"Spring Data JPA / JDBC"| Supabase
+
