@@ -1,0 +1,4 @@
+#!/bin/sh
+# Apache Maven Wrapper startup script
+exec cmd.exe /c "$(dirname "$0")/mvnw.cmd" "$@"
+
