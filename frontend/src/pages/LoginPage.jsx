@@ -13,9 +13,10 @@ import {
   CheckCircleIcon,
   AlertCircleIcon,
   ShieldCheckIcon,
+  LayersIcon,
 } from '../components/Icons';
 
-export default function LoginPage() {
+export default function LoginPage({ onAbrirDesignSystem }) {
   const { salvarLogin } = useAuth();
   const [modo, setModo] = useState('login'); // 'login' | 'cadastroCliente' | 'cadastroAgente'
   const [erro, setErro] = useState('');
@@ -542,6 +543,28 @@ export default function LoginPage() {
               <span>{carregando ? 'Processando cadastro...' : 'Concluir Cadastro de Agente'}</span>
             </button>
           </form>
+        )}
+
+        {onAbrirDesignSystem && (
+          <div
+            style={{
+              marginTop: '1.25rem',
+              paddingTop: '1rem',
+              borderTop: '1px solid #e2e8f0',
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              style={{ width: '100%' }}
+              onClick={onAbrirDesignSystem}
+            >
+              <LayersIcon size={15} />
+              <span>Explorar Página de Design System (UI/UX Pro Max)</span>
+            </button>
+          </div>
         )}
       </div>
     </div>

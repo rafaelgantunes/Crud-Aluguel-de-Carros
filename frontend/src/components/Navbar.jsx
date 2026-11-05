@@ -8,6 +8,7 @@ import {
   BuildingIcon,
   BankIcon,
   LogOutIcon,
+  LayersIcon,
 } from './Icons';
 
 export default function Navbar({ abaAtiva, setAbaAtiva }) {
@@ -74,6 +75,14 @@ export default function Navbar({ abaAtiva, setAbaAtiva }) {
         >
           <CarIcon size={17} />
           <span>Frota e Propriedade</span>
+        </button>
+        <button
+          type="button"
+          className={`nav-tab ${abaAtiva === 'design-system' ? 'active' : ''}`}
+          onClick={() => setAbaAtiva('design-system')}
+        >
+          <LayersIcon size={17} />
+          <span>Design System</span>
         </button>
       </nav>
 

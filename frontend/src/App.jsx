@@ -5,14 +5,22 @@ import LoginPage from './pages/LoginPage';
 import PedidosPage from './pages/PedidosPage';
 import ClientesPage from './pages/ClientesPage';
 import AutomoveisPage from './pages/AutomoveisPage';
+import DesignSystemPage from './pages/DesignSystemPage';
 
 function SistemaConteudo() {
   const { usuario } = useAuth();
   const [abaAtiva, setAbaAtiva] = useState('pedidos');
+  const [verDesignSystemPublico, setVerDesignSystemPublico] = useState(false);
 
-  // Restrição obrigatória: O sistema só pode ser utilizado após cadastro prévio e autenticação
   if (!usuario) {
-    return <LoginPage />;
+    if (verDesignSystemPublico) {
+      return <DesignSystemPage onVoltar={() => setVerDesignSystemPublico(false)} />;
+    }
+    return <LoginPage onAbrirDesignSystem={() => setVerDesignSystemPublico(true)} />;
+  }
+
+  if (abaAtiva === 'design-system') {
+    return <DesignSystemPage onVoltar={() => setAbaAtiva('pedidos')} />;
   }
 
   return (
@@ -34,4 +42,3 @@ export default function App() {
     </AuthProvider>
   );
 }
-
