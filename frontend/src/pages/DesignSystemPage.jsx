@@ -379,7 +379,7 @@ export default function DesignSystemPage({ onVoltar }) {
                 <ShieldCheckIcon size={20} />
               </div>
               <div>
-                <h2 className="card-title">3. Iconografia Vetorial SVG (Zero Emojis)</h2>
+                <h2 className="card-title">3. Iconografia Vetorial SVG </h2>
                 <p className="card-subtitle">
                   22 ícones vetoriais padronizados com <code>stroke-width: 1.85</code> e escala consistente.
                 </p>
