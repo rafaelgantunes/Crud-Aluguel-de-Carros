@@ -1,0 +1,12 @@
+# ==============================================================================
+# EXEMPLO de Configuração Local do Supabase (PostgreSQL em Nuvem)
+# Copie este arquivo para 'application-supabase.properties' e preencha sua senha.
+# O arquivo 'application-supabase.properties' está no .gitignore para segurança.
+# ==============================================================================
+spring.datasource.url=jdbc:postgresql://aws-1-sa-east-1.pooler.supabase.com:5432/postgres?sslmode=require&prepareThreshold=0
+spring.datasource.username=postgres.SEU_PROJETO_ID
+spring.datasource.password=SUA_SENHA_SUPABASE
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
