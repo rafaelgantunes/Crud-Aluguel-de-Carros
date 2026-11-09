@@ -3,6 +3,7 @@ package br.pucminas.diaw.aluguel.config;
 import br.pucminas.diaw.aluguel.model.*;
 import br.pucminas.diaw.aluguel.repository.*;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -16,17 +17,20 @@ public class DataInitializer implements CommandLineRunner {
     private final AgenteRepository agenteRepository;
     private final AutomovelRepository automovelRepository;
     private final PedidoAluguelRepository pedidoRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public DataInitializer(UsuarioRepository usuarioRepository,
                            ClienteRepository clienteRepository,
                            AgenteRepository agenteRepository,
                            AutomovelRepository automovelRepository,
-                           PedidoAluguelRepository pedidoRepository) {
+                           PedidoAluguelRepository pedidoRepository,
+                           PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.clienteRepository = clienteRepository;
         this.agenteRepository = agenteRepository;
         this.automovelRepository = automovelRepository;
         this.pedidoRepository = pedidoRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -35,10 +39,12 @@ public class DataInitializer implements CommandLineRunner {
             return;
         }
 
+        String senhaHashPadrao = passwordEncoder.encode("123456");
+
         // 1. Criar Clientes com suas entidades empregadoras e rendimentos (máx. 3)
         Cliente cliente1 = new Cliente(
                 "cliente",
-                "123456",
+                senhaHashPadrao,
                 "Gabriel Henrique Silva",
                 "MG-18.452.901",
                 "123.456.789-00",
@@ -51,7 +57,7 @@ public class DataInitializer implements CommandLineRunner {
 
         Cliente cliente2 = new Cliente(
                 "mariana",
-                "123456",
+                senhaHashPadrao,
                 "Mariana Costa Oliveira",
                 "MG-21.998.112",
                 "987.654.321-11",
@@ -66,7 +72,7 @@ public class DataInitializer implements CommandLineRunner {
         // 2. Criar Agentes (Empresa Locadora e Banco Agente)
         Agente agenteEmpresa = new Agente(
                 "empresa",
-                "123456",
+                senhaHashPadrao,
                 "AutoRent Minas Locadora",
                 "12.345.678/0001-90",
                 "AutoRent Minas Gestão de Frotas S.A.",
@@ -76,7 +82,7 @@ public class DataInitializer implements CommandLineRunner {
 
         Agente agenteBanco = new Agente(
                 "banco",
-                "123456",
+                senhaHashPadrao,
                 "Banco CrediAuto S.A.",
                 "45.987.123/0001-55",
                 "Banco CrediAuto Financiamentos e Leasing S.A.",

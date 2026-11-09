@@ -51,8 +51,29 @@ class AluguelCarrosApplicationTests {
         );
         Cliente salvo = clienteService.criarCliente(dto);
         assertNotNull(salvo.getId());
+        assertTrue(salvo.getSenha().startsWith("$2"));
         assertEquals(3, salvo.getRendimentos().size());
         assertEquals(new BigDecimal("7000.00"), salvo.calcularRendaTotal());
+    }
+
+    @Test
+    void deveBloquearMaisDeTresRendimentosNoBackend() {
+        ClienteRequestDTO dtoInvalido = new ClienteRequestDTO(
+                "clientequatro",
+                "123456",
+                "Cliente Excesso",
+                "MG-99.888.777",
+                "999.888.777-66",
+                "Av. Teste, 500",
+                "Engenheiro",
+                List.of(
+                        new RendimentoDTO("Emp 1", new BigDecimal("1000.00")),
+                        new RendimentoDTO("Emp 2", new BigDecimal("1000.00")),
+                        new RendimentoDTO("Emp 3", new BigDecimal("1000.00")),
+                        new RendimentoDTO("Emp 4", new BigDecimal("1000.00"))
+                )
+        );
+        assertThrows(IllegalArgumentException.class, () -> clienteService.criarCliente(dtoInvalido));
     }
 }
 

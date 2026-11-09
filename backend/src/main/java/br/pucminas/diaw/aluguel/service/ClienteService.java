@@ -6,6 +6,7 @@ import br.pucminas.diaw.aluguel.model.Cliente;
 import br.pucminas.diaw.aluguel.model.RendimentoCliente;
 import br.pucminas.diaw.aluguel.repository.ClienteRepository;
 import br.pucminas.diaw.aluguel.repository.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +17,14 @@ public class ClienteService {
 
     private final ClienteRepository clienteRepository;
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public ClienteService(ClienteRepository clienteRepository, UsuarioRepository usuarioRepository) {
+    public ClienteService(ClienteRepository clienteRepository,
+                          UsuarioRepository usuarioRepository,
+                          PasswordEncoder passwordEncoder) {
         this.clienteRepository = clienteRepository;
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Cliente> listarTodos() {
@@ -45,7 +50,7 @@ public class ClienteService {
 
         Cliente cliente = new Cliente(
                 dto.username().trim(),
-                dto.senha(),
+                passwordEncoder.encode(dto.senha()),
                 dto.nome().trim(),
                 dto.rg().trim(),
                 dto.cpf().trim(),
@@ -72,7 +77,7 @@ public class ClienteService {
 
         cliente.setUsername(dto.username().trim());
         if (dto.senha() != null && !dto.senha().isBlank()) {
-            cliente.setSenha(dto.senha());
+            cliente.setSenha(passwordEncoder.encode(dto.senha()));
         }
         cliente.setNome(dto.nome().trim());
         cliente.setRg(dto.rg().trim());
