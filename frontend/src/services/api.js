@@ -1,12 +1,28 @@
 const API_BASE = 'http://localhost:8080/api';
 
+function obterCabecalhoAuth() {
+  try {
+    const salvo = localStorage.getItem('autorent_usuario');
+    if (!salvo) return {};
+    const usuario = JSON.parse(salvo);
+    const token =
+      usuario?.token ||
+      usuario?.tokenSimulado ||
+      (usuario?.role ? `SESSION-${usuario.role}-ACTIVE` : null);
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch {
+    return {};
+  }
+}
+
 async function request(path, options = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...obterCabecalhoAuth(),
       ...(options.headers || {}),
     },
-    ...options,
   });
 
   if (response.status === 204) {
@@ -66,4 +82,3 @@ export const api = {
   cancelarPedido: (id) =>
     request(`/pedidos/${id}/cancelar`, { method: 'PATCH' }),
 };
-
